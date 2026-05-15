@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NexusCRM — Dev Log · 2026-05-15</title>
+  <style>
+    :root {
+      --blue: #2563eb;
+      --indigo: #4f46e5;
+      --green: #059669;
+      --amber: #d97706;
+      --red: #dc2626;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-500: #64748b;
+      --slate-700: #334155;
+      --slate-900: #0f172a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-700);
+      line-height: 1.6;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 60%, #4f46e5 100%);
+      color: white;
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .hero h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.5px; }
+    .hero p { margin-top: 0.5rem; opacity: 0.8; font-size: 1rem; }
+    .hero .meta { display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .hero .meta-item { font-size: 13px; opacity: 0.7; }
+    .hero .meta-item span { font-weight: 600; opacity: 1; }
+
+    /* ── Layout ── */
+    .container { max-width: 980px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+    /* ── Status Row ── */
+    .status-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+    .status-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1.1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .status-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .status-card h4 { font-size: 13px; font-weight: 600; color: var(--slate-900); }
+    .status-card p  { font-size: 11px; color: var(--slate-500); margin-top: 1px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 4px; }
+    .dot.green  { background: var(--green); }
+    .dot.amber  { background: var(--amber); }
+
+    /* ── Section Headers ── */
+    .section-title {
+      font-size: 1.15rem; font-weight: 700; color: var(--slate-900);
+      border-left: 4px solid var(--blue);
+      padding-left: 0.75rem;
+      margin: 2.5rem 0 1.2rem;
+    }
+
+    /* ── Feature Cards ── */
+    .feature-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    .feature-card .header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+    .feature-card .num { width: 32px; height: 32px; border-radius: 8px; background: var(--blue); color: white; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; color: var(--slate-900); }
+    .feature-card .sub { font-size: 12px; color: var(--slate-500); margin-top: 2px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.8rem; }
+    .tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid; }
+    .tag.blue   { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+    .tag.green  { color: #065f46; background: #ecfdf5; border-color: #a7f3d0; }
+    .tag.purple { color: #4338ca; background: #eef2ff; border-color: #c7d2fe; }
+    .tag.amber  { color: #92400e; background: #fffbeb; border-color: #fde68a; }
+    .tag.slate  { color: #334155; background: #f8fafc; border-color: #cbd5e1; }
+
+    /* ── Prompt Boxes ── */
+    .prompt-card {
+      background: var(--slate-900);
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 1.2rem 1.4rem;
+      margin-bottom: 1rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .prompt-card .prompt-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      font-family: sans-serif;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .prompt-card code { color: #7dd3fc; }
+
+    /* ── Tables ── */
+    .styled-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 1.2rem; }
+    .styled-table th { background: var(--slate-100); color: var(--slate-500); text-transform: uppercase; font-size: 10px; letter-spacing: 1px; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--slate-200); }
+    .styled-table td { padding: 10px 14px; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); }
+    .styled-table tr:hover td { background: var(--slate-50); }
+    .styled-table code { background: var(--slate-100); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--indigo); font-family: monospace; }
+
+    /* ── API Endpoints ── */
+    .endpoint { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-radius: 8px; background: white; border: 1px solid var(--slate-200); margin-bottom: 6px; }
+    .method { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; min-width: 42px; text-align: center; }
+    .method.GET  { background: #ecfdf5; color: #065f46; }
+    .method.POST { background: #eff6ff; color: #1e40af; }
+    .method.PUT  { background: #fffbeb; color: #92400e; }
+    .endpoint-path { font-family: monospace; font-size: 13px; color: var(--slate-900); flex: 1; }
+    .endpoint-desc { font-size: 12px; color: var(--slate-500); }
+    .endpoint-badge { font-size: 10px; padding: 2px 7px; border-radius: 4px; background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; font-weight: 600; }
+
+    /* ── Migration Chips ── */
+    .migration-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .migration-chip { display: flex; align-items: center; gap: 8px; background: white; border: 1px solid var(--slate-200); border-radius: 8px; padding: 10px 14px; font-size: 12px; }
+    .migration-chip .name { font-weight: 700; color: var(--slate-900); font-family: monospace; }
+    .migration-chip .tables { color: var(--slate-500); }
+
+    /* ── File Tree ── */
+    .file-tree { background: var(--slate-900); color: #e2e8f0; border-radius: 10px; padding: 1.3rem 1.5rem; font-family: monospace; font-size: 12.5px; line-height: 1.9; }
+    .file-tree .new  { color: #4ade80; }
+    .file-tree .mod  { color: #fbbf24; }
+    .file-tree .dim  { color: #64748b; }
+    .file-tree .dir  { color: #93c5fd; font-weight: 700; }
+
+    /* ── Footer ── */
+    footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--slate-500); border-top: 1px solid var(--slate-200); }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.7rem; }
+      .status-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ── -->
+<div class="hero">
+  <div class="badge">Development Session Log</div>
+  <h1>NexusCRM</h1>
+  <p>Enterprise CRM — Daily Work Summary</p>
+  <div class="meta">
+    <div class="meta-item">Date: <span>Thursday, 15 May 2026</span></div>
+    <div class="meta-item">Backend: <span>ASP.NET Core 7 + SQLite</span></div>
+    <div class="meta-item">Frontend: <span>React + Vite + Tailwind CSS</span></div>
+    <div class="meta-item">Modules Added: <span>4</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ── Current Status ── -->
+  <h2 class="section-title">Current System Status</h2>
+  <div class="status-row">
+    <div class="status-card">
+      <div class="status-icon" style="background:#dcfce7">🟢</div>
+      <div>
+        <h4><span class="dot green"></span>Backend API</h4>
+        <p>http://localhost:5146</p>
+      </div>
+    </div>
+    <div class="status-card">
+      <div class="status-icon" style="background:#dcfce7">🟢</div>
+      <div>
+        <h4><span class="dot green"></span>Frontend Dev Server</h4>
+        <p>http://localhost:5173</p>
+      </div>
+    </div>
+    <div class="status-card">
+      <div class="status-icon" style="background:#dcfce7">🗄️</div>
+      <div>
+        <h4><span class="dot green"></span>SQLite Database</h4>
+        <p>crm.db — migrated & ready</p>
+      </div>
+    </div>
+    <div class="status-card">
+      <div class="status-icon" style="background:#fef9c3">⏳</div>
+      <div>
+        <h4><span class="dot amber"></span>Task Management</h4>
+        <p>Stub exists — not implemented</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Prompts ── -->
+  <h2 class="section-title">Prompts Used Today</h2>
+
+  <div class="prompt-card">
+    <div class="prompt-label">Prompt 1 — Notification &amp; Activity Log System</div>
+    Create Notification and Activity Log system for CRM.<br><br>
+    Features:<br>
+    &nbsp;&nbsp;- Track user actions<br>
+    &nbsp;&nbsp;- Store activity history<br>
+    &nbsp;&nbsp;- Notification center<br>
+    &nbsp;&nbsp;- Task reminders<br>
+    &nbsp;&nbsp;- Lead updates<br><br>
+    Generate:<br>
+    &nbsp;&nbsp;- Database schema<br>
+    &nbsp;&nbsp;- Backend APIs<br>
+    &nbsp;&nbsp;- React frontend components
+  </div>
+
+  <div class="prompt-card">
+    <div class="prompt-label">Prompt 2 — Settings Role-Based Access Guard</div>
+    http://localhost:5173/settings fill the setting dashboard with<br>
+    "Role-based access rules and preferences are managed here."<br>
+    only admin can view edit and give their permission
+  </div>
+
+  <div class="prompt-card">
+    <div class="prompt-label">Prompt 3 — Professional CRM Settings Panel</div>
+    Create a professional CRM Settings Panel.<br><br>
+    Requirements: Left sidebar navigation, Multiple settings tabs,<br>
+    Save settings functionality, Validation, Responsive UI, Dark/light theme<br><br>
+    Sections:<br>
+    &nbsp;&nbsp;- General settings &nbsp;- Company profile &nbsp;- SMTP settings<br>
+    &nbsp;&nbsp;- Security settings &nbsp;- Notification settings &nbsp;- User preferences<br>
+    &nbsp;&nbsp;- Billing settings &nbsp;- API integrations &nbsp;- Backup settings<br><br>
+    Frontend: React + Tailwind CSS &nbsp;|&nbsp; Backend: ASP.NET API<br>
+    Generate complete implementation.
+  </div>
+
+  <div class="prompt-card">
+    <div class="prompt-label">Prompt 4 — Reports &amp; Analytics Module</div>
+    Create Reports and Analytics module for CRM.<br><br>
+    Features:<br>
+    &nbsp;&nbsp;- Sales reports &nbsp;- Lead conversion reports<br>
+    &nbsp;&nbsp;- Customer growth charts &nbsp;- Task completion reports<br>
+    &nbsp;&nbsp;- Dashboard analytics<br><br>
+    Frontend: React charts &nbsp;|&nbsp; Backend: ASP.NET API
+  </div>
+
+  <!-- ── Features ── -->
+  <h2 class="section-title">Features Implemented</h2>
+
+  <div class="feature-card">
+    <div class="header">
+      <div class="num">1</div>
+      <div>
+        <h3>Notification &amp; Activity Log System</h3>
+        <div class="sub">Full backend models, services, controllers + rebuilt Header component + new ActivityLog page</div>
+      </div>
+    </div>
+    <div class="tag-row">
+      <span class="tag blue">ActivityLog Model</span>
+      <span class="tag blue">Notification Model</span>
+      <span class="tag green">INotificationService</span>
+      <span class="tag green">IActivityService</span>
+      <span class="tag purple">NotificationsController</span>
+      <span class="tag purple">ActivitiesController</span>
+      <span class="tag amber">Header.jsx Rebuilt</span>
+      <span class="tag amber">ActivityLog.jsx New Page</span>
+      <span class="tag slate">30s Polling</span>
+      <span class="tag slate">Unread Badge</span>
+      <span class="tag slate">Mark All Read</span>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="header">
+      <div class="num" style="background:#4f46e5">2</div>
+      <div>
+        <h3>Settings Dashboard — Role-Based Access Guard</h3>
+        <div class="sub">Admin-only gate with visual restriction for Sales/Manager roles</div>
+      </div>
+    </div>
+    <div class="tag-row">
+      <span class="tag purple">Admin-only Gate</span>
+      <span class="tag blue">User Management Table</span>
+      <span class="tag green">Role Dropdown (4 roles)</span>
+      <span class="tag amber">Delete User Button</span>
+      <span class="tag slate">"You" Badge Protection</span>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="header">
+      <div class="num" style="background:#059669">3</div>
+      <div>
+        <h3>Professional CRM Settings Panel — 9 Sections</h3>
+        <div class="sub">Full-stack: Setting model + SettingsController + 9-tab Settings.jsx with per-section save</div>
+      </div>
+    </div>
+    <div class="tag-row">
+      <span class="tag green">Setting Model</span>
+      <span class="tag green">SettingsService (defaults)</span>
+      <span class="tag purple">SettingsController (Admin POST)</span>
+      <span class="tag blue">General Tab</span>
+      <span class="tag blue">SMTP Tab</span>
+      <span class="tag blue">Security Tab</span>
+      <span class="tag blue">Notifications Tab</span>
+      <span class="tag blue">Preferences Tab</span>
+      <span class="tag blue">Billing Tab</span>
+      <span class="tag blue">API &amp; Integrations Tab</span>
+      <span class="tag blue">Backup Tab</span>
+      <span class="tag blue">Roles &amp; Access Tab</span>
+      <span class="tag amber">Toast Notifications</span>
+      <span class="tag slate">useSection Custom Hook</span>
+    </div>
+  </div>
+
+  <div class="feature-card">
+    <div class="header">
+      <div class="num" style="background:#d97706">4</div>
+      <div>
+        <h3>Reports &amp; Analytics Module</h3>
+        <div class="sub">6 backend aggregation endpoints + 6 Recharts chart types + 4 KPI tiles + pipeline table</div>
+      </div>
+    </div>
+    <div class="tag-row">
+      <span class="tag amber">ReportsController (6 endpoints)</span>
+      <span class="tag blue">AreaChart — Revenue</span>
+      <span class="tag blue">BarChart — Customer Growth</span>
+      <span class="tag blue">Horizontal BarChart — Pipeline</span>
+      <span class="tag blue">PieChart — Deal Value</span>
+      <span class="tag blue">LineChart — Activity 14d</span>
+      <span class="tag blue">SVG Ring — Conversion %</span>
+      <span class="tag green">4 KPI Tiles</span>
+      <span class="tag green">Pipeline Stage Table</span>
+      <span class="tag slate">npm install recharts</span>
+    </div>
+  </div>
+
+  <!-- ── API Endpoints ── -->
+  <h2 class="section-title">API Endpoints Added</h2>
+
+  <p style="font-size:13px;color:var(--slate-500);margin-bottom:1rem;">All require <code style="background:var(--slate-100);padding:2px 6px;border-radius:4px;font-size:12px;">Authorization: Bearer {token}</code></p>
+
+  <p style="font-size:12px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Notifications</p>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/notifications</span><span class="endpoint-desc">List user notifications (last 50)</span></div>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/notifications/unread-count</span><span class="endpoint-desc">Unread notification count</span></div>
+  <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/api/notifications/{id}/read</span><span class="endpoint-desc">Mark one as read</span></div>
+  <div class="endpoint"><span class="method PUT">PUT</span><span class="endpoint-path">/api/notifications/read-all</span><span class="endpoint-desc">Mark all as read</span></div>
+
+  <p style="font-size:12px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:1px;margin:1rem 0 8px;">Activities</p>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/activities?limit=100</span><span class="endpoint-desc">Recent system activities</span></div>
+
+  <p style="font-size:12px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:1px;margin:1rem 0 8px;">Settings</p>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/settings?group={group}</span><span class="endpoint-desc">Get settings for a group</span></div>
+  <div class="endpoint"><span class="method POST">POST</span><span class="endpoint-path">/api/settings</span><span class="endpoint-desc">Save settings group</span><span class="endpoint-badge">Admin Only</span></div>
+
+  <p style="font-size:12px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:1px;margin:1rem 0 8px;">Reports</p>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/reports/summary</span><span class="endpoint-desc">KPIs: customers, leads, revenue, conversion%</span></div>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/reports/leads-by-stage</span><span class="endpoint-desc">Count + value per pipeline stage</span></div>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/reports/customer-growth</span><span class="endpoint-desc">Monthly new customer registrations</span></div>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/reports/revenue-over-time</span><span class="endpoint-desc">Monthly won-deal revenue</span></div>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/reports/pipeline-summary</span><span class="endpoint-desc">Value per stage for pie chart</span></div>
+  <div class="endpoint"><span class="method GET">GET</span><span class="endpoint-path">/api/reports/activity-summary</span><span class="endpoint-desc">Daily actions — last 14 days</span></div>
+
+  <!-- ── Migrations ── -->
+  <h2 class="section-title">Database Migrations</h2>
+  <div class="migration-list">
+    <div class="migration-chip">
+      <div>
+        <div class="name">AddActivityNotifications</div>
+        <div class="tables">Tables: ActivityLogs, Notifications</div>
+      </div>
+    </div>
+    <div class="migration-chip">
+      <div>
+        <div class="name">AddSettings</div>
+        <div class="tables">Tables: Settings</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── File Tree ── -->
+  <h2 class="section-title">Files Changed</h2>
+  <div class="file-tree">
+    <span class="dir">backend/</span><br>
+    &nbsp;&nbsp;<span class="dir">Models/</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ ActivityLog.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ Notification.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ Setting.cs</span><br>
+    &nbsp;&nbsp;<span class="dir">DTOs/</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ ActivityNotificationDTOs.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ SettingsDTOs.cs</span><br>
+    &nbsp;&nbsp;<span class="dir">Services/</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ IActivityNotificationServices.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ ActivityNotificationServices.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ SettingsService.cs</span><br>
+    &nbsp;&nbsp;<span class="dir">Controllers/</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ ActivitiesController.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ NotificationsController.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ SettingsController.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ ReportsController.cs</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="mod">~ CustomersController.cs  (+ activity logging)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="mod">~ LeadsController.cs      (+ activity logging)</span><br>
+    &nbsp;&nbsp;<span class="mod">~ Data/ApplicationDbContext.cs  (+ 3 DbSets)</span><br>
+    &nbsp;&nbsp;<span class="mod">~ Program.cs                    (+ 3 DI registrations)</span><br>
+    <br>
+    <span class="dir">frontend/src/</span><br>
+    &nbsp;&nbsp;<span class="dir">components/</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="mod">~ Header.jsx    (full rewrite — notifications + profile)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="mod">~ Sidebar.jsx   (+ Activity Log nav item)</span><br>
+    &nbsp;&nbsp;<span class="dir">pages/</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ ActivityLog.jsx</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ Settings.jsx</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="new">+ Reports.jsx</span><br>
+    &nbsp;&nbsp;<span class="mod">~ App.jsx  (+ /activity, /settings, /reports routes)</span><br>
+    <br>
+    <span class="dim">Legend:  </span><span class="new">+ New file  </span><span class="mod">~ Modified file</span>
+  </div>
+
+</div>
+
+<footer>
+  NexusCRM &nbsp;·&nbsp; Development Log &nbsp;·&nbsp; Generated 2026-05-15
+</footer>
+
+</body>
+</html>

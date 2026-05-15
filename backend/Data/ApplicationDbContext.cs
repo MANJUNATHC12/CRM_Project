@@ -15,4 +15,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Lead> Leads { get; set; }
     public DbSet<ActivityLog> ActivityLogs { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<Setting> Settings { get; set; }
 }

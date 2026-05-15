@@ -28,6 +28,7 @@ builder.Services.AddScoped<ILeadRepository, LeadRepository>();
 builder.Services.AddScoped<ILeadService, LeadService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IActivityService, ActivityService>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();
 
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
