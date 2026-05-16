@@ -145,4 +145,51 @@ public class ReportsController : ControllerBase
         });
         return Ok(result);
     }
+
+    // GET /api/reports/lead-analytics — advanced lead dashboard metrics
+    [HttpGet("lead-analytics")]
+    public async Task<IActionResult> GetLeadAnalytics()
+    {
+        var allLeads = await _ctx.Leads.ToListAsync();
+        
+        var wonCount = allLeads.Count(l => l.Stage == "Won");
+        var lostCount = allLeads.Count(l => l.Stage == "Lost");
+        var openCount = allLeads.Count(l => l.Stage != "Won" && l.Stage != "Lost");
+
+        // Calculate Revenue Forecast based on Pipeline Probabilities
+        var forecast = allLeads.Where(l => l.Stage != "Won" && l.Stage != "Lost")
+            .Sum(l => 
+                l.Stage == "New Leads" ? (double)l.Value * 0.1 :
+                l.Stage == "Contacted" ? (double)l.Value * 0.3 :
+                l.Stage == "Qualified" ? (double)l.Value * 0.6 :
+                l.Stage == "Proposal" ? (double)l.Value * 0.8 :
+                (double)l.Value * 0.2);
+
+        // Mocked Performance & Sources until full DB migration handles these fields
+        var performance = new[] {
+            new { name = "Sarah Jenkins", won = 120000, pipeline = 450000 },
+            new { name = "Mike Ross", won = 85000, pipeline = 320000 },
+            new { name = "David Chen", won = 150000, pipeline = 200000 }
+        };
+
+        var sources = new[] {
+            new { name = "Organic Search", value = 45 },
+            new { name = "Client Referral", value = 25 },
+            new { name = "Cold Outreach", value = 20 },
+            new { name = "Social Media", value = 10 }
+        };
+
+        var wonVsLost = new[] {
+            new { name = "Won Deals", value = wonCount, fill = "#10b981" },
+            new { name = "Lost Deals", value = lostCount, fill = "#ef4444" },
+            new { name = "Open Pipeline", value = openCount, fill = "#3b82f6" }
+        };
+
+        return Ok(new {
+            wonVsLost,
+            forecast = Math.Round(forecast, 2),
+            performance,
+            sources
+        });
+    }
 }

@@ -1,4 +1,4 @@
-import { Search, Edit2, Phone, Mail, FileText, Activity, Trash2, Plus, X, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import { Search, Edit2, Phone, Mail, FileText, Activity, Trash2, Plus, X, ChevronLeft, ChevronRight, Users, Check, AlertTriangle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -19,9 +19,17 @@ export default function Customers() {
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
   const [formData, setFormData] = useState({ name: '', company: '', email: '', phone: '', status: 'Active' });
   const [newNote, setNewNote] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const fetchCustomers = async (currentPage = page, currentSearch = search) => {
     setLoading(true);
@@ -30,6 +38,11 @@ export default function Customers() {
       const response = await fetch(`http://localhost:5146/api/customers?search=${encodeURIComponent(currentSearch)}&page=${currentPage}&pageSize=10`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` }
       });
+      if (response.status === 401) {
+        localStorage.removeItem('crm_token');
+        window.location.href = '/login';
+        return;
+      }
       if (!response.ok) throw new Error('Failed to fetch customers');
       const data = await response.json();
       setCustomers(data.items);
@@ -42,6 +55,7 @@ export default function Customers() {
         setSelectedCustomer(null);
       }
     } catch (err) {
+      console.error('Fetch error:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -72,6 +86,7 @@ export default function Customers() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const url = modalMode === 'add' ? `http://localhost:5146/api/customers` : `http://localhost:5146/api/customers/${selectedCustomer.id}`;
       const method = modalMode === 'add' ? 'POST' : 'PUT';
@@ -83,37 +98,64 @@ export default function Customers() {
         },
         body: JSON.stringify(formData)
       });
+      if (response.status === 401) {
+        localStorage.removeItem('crm_token');
+        window.location.href = '/login';
+        return;
+      }
       if (!response.ok) throw new Error(`Failed to ${modalMode} customer`);
       
       const savedCustomer = await response.json();
       if (modalMode === 'add') {
          setSelectedCustomer(savedCustomer);
+         showToast('Customer added successfully!');
       } else {
          if (selectedCustomer?.id === savedCustomer.id) {
              setSelectedCustomer({ ...selectedCustomer, ...savedCustomer });
          }
+         showToast('Customer updated successfully!');
       }
       setIsModalOpen(false);
       fetchCustomers();
     } catch (err) {
-      alert(err.message);
+      showToast(err.message, 'error');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this customer?")) return;
+  const confirmDelete = (id) => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDelete = async () => {
+    const id = selectedCustomer?.id;
+    if (!id) return;
+    
+    setIsDeleteModalOpen(false);
     try {
       const response = await fetch(`http://localhost:5146/api/customers/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` }
       });
-      if (!response.ok) throw new Error('Failed to delete customer');
-      if (selectedCustomer?.id === id) {
-        setSelectedCustomer(null);
+      
+      if (response.status === 401) {
+        localStorage.removeItem('crm_token');
+        window.location.href = '/login';
+        return;
       }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to delete customer');
+      }
+      
+      setSelectedCustomer(null);
       fetchCustomers();
+      showToast('Customer deleted successfully!');
     } catch (err) {
-      alert(err.message);
+      console.error('Delete error:', err);
+      showToast(err.message, 'error');
     }
   };
 
@@ -128,6 +170,11 @@ export default function Customers() {
         },
         body: JSON.stringify({ content: newNote })
       });
+      if (response.status === 401) {
+        localStorage.removeItem('crm_token');
+        window.location.href = '/login';
+        return;
+      }
       if (!response.ok) throw new Error('Failed to add note');
       const addedNote = await response.json();
       setSelectedCustomer({
@@ -150,7 +197,13 @@ export default function Customers() {
   };
 
   return (
-    <div className="flex flex-col xl:flex-row h-[calc(100vh-8rem)] gap-4">
+    <div className="flex flex-col xl:flex-row h-[calc(100vh-8rem)] gap-4 relative">
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-[100] flex items-center gap-2 px-4 py-3 rounded-lg shadow-xl text-sm font-medium animate-in slide-in-from-bottom-5 ${toast.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
+          {toast.type === 'success' ? <Check size={16} /> : <AlertTriangle size={16} />}
+          {toast.msg}
+        </div>
+      )}
       {/* Customer List */}
       <div className="flex-1 bg-white border border-slate-200 rounded-lg shadow-sm flex flex-col h-full overflow-hidden">
         <div className="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50/50">
@@ -181,7 +234,7 @@ export default function Customers() {
           {loading && <div className="p-4 text-center text-sm text-slate-500">Loading...</div>}
           {!loading && customers.length === 0 && <div className="p-4 text-center text-sm text-slate-500">No customers found.</div>}
           {!loading && customers.map(c => (
-            <div key={c.id} onClick={() => setSelectedCustomer(c)} className={`p-4 border-b border-slate-100 flex items-center justify-between cursor-pointer transition-colors ${selectedCustomer?.id === c.id ? 'bg-blue-50/50 border-l-2 border-l-blue-600' : 'hover:bg-slate-50 border-l-2 border-l-transparent'}`}>
+            <div key={c.id} onClick={() => setSelectedCustomer(c)} className={`p-4 border-b border-slate-100 flex items-center justify-between cursor-pointer transition-colors group ${selectedCustomer?.id === c.id ? 'bg-blue-50/50 border-l-2 border-l-blue-600' : 'hover:bg-slate-50 border-l-2 border-l-transparent'}`}>
                <div className="flex items-center gap-3">
                  <div className="w-8 h-8 rounded bg-slate-100 border border-slate-200 flex items-center justify-center font-medium text-slate-700 shrink-0 text-sm">
                    {c.name.charAt(0).toUpperCase()}
@@ -191,7 +244,20 @@ export default function Customers() {
                    <p className="text-xs text-slate-500">{c.company}</p>
                  </div>
                </div>
-               <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider font-medium rounded border ${getStatusColor(c.status)}`}>{c.status}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-0.5 text-[10px] uppercase tracking-wider font-medium rounded border ${getStatusColor(c.status)}`}>{c.status}</span>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedCustomer(c);
+                      confirmDelete();
+                    }} 
+                    className="p-1 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded opacity-0 group-hover:opacity-100 transition-all"
+                    title="Quick Delete"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
             </div>
           ))}
         </div>
@@ -212,9 +278,15 @@ export default function Customers() {
       {selectedCustomer ? (
         <div className="w-full xl:w-[450px] bg-white border border-slate-200 rounded-lg shadow-sm flex flex-col h-full overflow-hidden shrink-0">
           <div className="p-6 border-b border-slate-200 text-center bg-slate-50/50 relative group">
-            <div className="absolute right-4 top-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button onClick={() => handleOpenModal('edit', selectedCustomer)} className="p-1.5 text-blue-600 hover:bg-blue-50 border border-transparent rounded-md transition-colors" title="Edit"><Edit2 size={16} /></button>
-              <button onClick={() => handleDelete(selectedCustomer.id)} className="p-1.5 text-red-600 hover:bg-red-50 border border-transparent rounded-md transition-colors" title="Delete"><Trash2 size={16} /></button>
+            <div className="absolute right-4 top-4 flex gap-1">
+              <button onClick={() => {
+                console.log('Edit clicked for', selectedCustomer?.id);
+                handleOpenModal('edit', selectedCustomer);
+              }} className="p-1.5 text-blue-600 hover:bg-blue-50 border border-slate-200 rounded-md transition-colors bg-white shadow-sm" title="Edit"><Edit2 size={16} /></button>
+              <button onClick={() => {
+                console.log('Delete clicked for', selectedCustomer?.id);
+                confirmDelete();
+              }} className="p-1.5 text-red-600 hover:bg-red-50 border border-slate-200 rounded-md transition-colors bg-white shadow-sm" title="Delete"><Trash2 size={16} /></button>
             </div>
             <div className={`w-16 h-16 rounded shadow-sm mx-auto flex items-center justify-center font-semibold text-2xl mb-3 border ${getStatusColor(selectedCustomer.status)}`}>
               {selectedCustomer.name.charAt(0).toUpperCase()}
@@ -311,11 +383,49 @@ export default function Customers() {
                    <option value="Inactive">Inactive</option>
                 </select>
               </div>
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2">
-                 <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors">Cancel</button>
-                 <button type="submit" className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">Save</button>
+              <div className="pt-4 border-t border-slate-100 flex justify-between gap-2">
+                 {modalMode === 'edit' ? (
+                   <button type="button" onClick={() => { setIsModalOpen(false); confirmDelete(); }} className="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 border border-red-200 rounded-md transition-colors">Delete</button>
+                 ) : <div></div>}
+                 <div className="flex gap-2">
+                    <button type="button" onClick={() => setIsModalOpen(false)} disabled={isSubmitting} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors disabled:opacity-50">Cancel</button>
+                    <button type="submit" disabled={isSubmitting} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 flex items-center gap-2">
+                      {isSubmitting ? 'Saving...' : 'Save'}
+                    </button>
+                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in duration-200">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Delete Customer?</h3>
+              <p className="text-slate-500 text-sm mb-6">
+                Are you sure you want to delete <span className="font-semibold text-slate-700">{selectedCustomer?.name}</span>? This action cannot be undone and all associated notes will be removed.
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleDelete}
+                  className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 shadow-md shadow-red-200 transition-all active:scale-95"
+                >
+                  Confirm Delete
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

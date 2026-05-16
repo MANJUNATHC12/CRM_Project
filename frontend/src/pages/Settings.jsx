@@ -404,6 +404,7 @@ function RolesAccessSection() {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
   const [toast, setToast] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -434,9 +435,11 @@ function RolesAccessSection() {
     } finally { setProcessingId(null); }
   };
 
-  const deleteUser = async (userId) => {
-    if (!window.confirm('Permanently delete this user?')) return;
+  const deleteUser = async () => {
+    if (!userToDelete) return;
+    const userId = userToDelete.id;
     setProcessingId(userId);
+    setUserToDelete(null);
     try {
       const res = await fetch(`http://localhost:5146/api/users/${userId}`, {
         method: 'DELETE', headers: { Authorization: `Bearer ${token()}` }
@@ -512,7 +515,7 @@ function RolesAccessSection() {
                       </td>
                       <td className="px-5 py-3.5">
                         <button
-                          onClick={() => deleteUser(u.id)}
+                          onClick={() => setUserToDelete(u)}
                           disabled={isSelf || processingId === u.id}
                           className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 border border-transparent hover:border-red-100 px-2.5 py-1.5 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed"
                         >
@@ -525,6 +528,37 @@ function RolesAccessSection() {
               </tbody>
             </table>
           )}
+        </div>
+      )}
+
+      {/* Delete User Confirmation Modal */}
+      {userToDelete && (
+        <div className="fixed inset-0 bg-slate-900/50 z-[60] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-lg shadow-2xl w-full max-w-sm overflow-hidden animate-in zoom-in duration-200">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">Remove User?</h3>
+              <p className="text-slate-500 text-sm mb-6">
+                Are you sure you want to permanently remove <span className="font-semibold text-slate-700">{userToDelete.fullName}</span>? This action revokes all access and cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setUserToDelete(null)}
+                  className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={deleteUser}
+                  className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 shadow-md shadow-red-200 transition-all active:scale-95"
+                >
+                  Remove User
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

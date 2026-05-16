@@ -50,7 +50,7 @@ public class LeadsController : ControllerBase
         try
         {
             var created = await _leadService.CreateLeadAsync(dto);
-            await _activityService.LogActivityAsync(GetUserId(), "Created", "Lead", created.Id, $"New lead added for {created.Company}");
+            try { await _activityService.LogActivityAsync(GetUserId(), "Created", "Lead", created.Id, $"New lead added for {created.Company}"); } catch { /* Ignore activity errors */ }
             return CreatedAtAction(nameof(GetLead), new { id = created.Id }, created);
         }
         catch (Exception ex)
@@ -67,7 +67,7 @@ public class LeadsController : ControllerBase
         {
             var updated = await _leadService.UpdateLeadAsync(id, dto);
             if (updated == null) return NotFound(new { message = "Lead not found." });
-            await _activityService.LogActivityAsync(GetUserId(), "Updated", "Lead", id, $"Moved lead to {updated.Stage}");
+            try { await _activityService.LogActivityAsync(GetUserId(), "Updated", "Lead", id, $"Moved lead to {updated.Stage}"); } catch { /* Ignore activity errors */ }
             return Ok(updated);
         }
         catch (Exception ex)

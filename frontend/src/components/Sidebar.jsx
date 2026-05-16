@@ -1,11 +1,13 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, Briefcase, Activity, CheckSquare, TrendingUp, Settings, Zap, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Briefcase, Columns, Activity, CheckSquare, TrendingUp, Settings, Zap, LogOut, BarChart2 } from 'lucide-react';
 
 export default function Sidebar() {
   const navItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
     { name: 'Customers', icon: Users, path: '/customers' },
-    { name: 'Leads', icon: Briefcase, path: '/leads' },
+    { name: 'Leads (List)', icon: Briefcase, path: '/leads' },
+    { name: 'Pipeline (Board)', icon: Columns, path: '/pipeline' },
+    { name: 'Lead Analytics', icon: BarChart2, path: '/leads/analytics' },
     { name: 'Activity Log', icon: Activity, path: '/activity' },
     { name: 'Tasks', icon: CheckSquare, path: '/tasks' },
     { name: 'Reports', icon: TrendingUp, path: '/reports' },

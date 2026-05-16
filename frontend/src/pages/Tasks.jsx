@@ -1,4 +1,4 @@
-import { CheckSquare, Square, Clock, Filter } from 'lucide-react';
+import { CheckSquare, Square, Clock, Filter, Trash2, AlertTriangle, Check } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Tasks() {
@@ -9,12 +9,36 @@ export default function Tasks() {
     { id: 4, title: 'Weekly Pipeline Sync', desc: '', due: 'Friday', priority: 'Low', completed: true },
   ]);
 
+  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, taskId: null });
+  const [toast, setToast] = useState(null);
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const toggleTask = (id) => {
     setTasks(tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
   };
 
+  const handleDelete = (id) => {
+    setDeleteConfirm({ isOpen: true, taskId: id });
+  };
+
+  const confirmDelete = () => {
+    setTasks(tasks.filter(t => t.id !== deleteConfirm.taskId));
+    setDeleteConfirm({ isOpen: false, taskId: null });
+    showToast('Task deleted successfully!');
+  };
+
   return (
-    <div className="max-w-4xl mx-auto h-full flex flex-col">
+    <div className="max-w-4xl mx-auto h-full flex flex-col relative">
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-[100] flex items-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-lg shadow-xl text-sm font-medium animate-in slide-in-from-bottom-5">
+          <Check size={16} />
+          {toast}
+        </div>
+      )}
       <div className="flex justify-between items-end mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 tracking-tight mb-1">My Tasks</h1>
@@ -48,14 +72,54 @@ export default function Tasks() {
                    <span className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded border ${task.priority === 'High' ? 'bg-red-50 text-red-700 border-red-200' : task.priority === 'Medium' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-50 text-slate-600 border-slate-200'}`}>{task.priority}</span>
                  </div>
                  {task.desc && <p className="text-sm text-slate-500 mb-2">{task.desc}</p>}
-                 <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                   <Clock size={12}/> {task.due}
-                 </div>
-               </div>
-            </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                      <Clock size={12}/> {task.due}
+                    </div>
+                    <button 
+                      onClick={() => handleDelete(task.id)}
+                      className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded transition-all"
+                      title="Delete task"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+             </div>
           ))}
         </div>
       </div>
+
+      {/* Custom Delete Confirmation Modal */}
+      {deleteConfirm.isOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100">
+                <AlertTriangle size={32} className="text-red-600" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-2">Delete Task?</h3>
+              <p className="text-sm text-slate-500 mb-6">
+                Are you sure you want to delete this task? This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setDeleteConfirm({ isOpen: false, taskId: null })}
+                  className="flex-1 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmDelete}
+                  className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -58,9 +58,15 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> DeleteCustomerAsync(int id)
     {
-        var customer = await _context.Customers.FindAsync(id);
+        var customer = await _context.Customers.Include(c => c.Notes).FirstOrDefaultAsync(c => c.Id == id);
         if (customer == null) return false;
         
+        // Remove related notes first to avoid FK issues
+        if (customer.Notes != null && customer.Notes.Any())
+        {
+            _context.CustomerNotes.RemoveRange(customer.Notes);
+        }
+
         _context.Customers.Remove(customer);
         await _context.SaveChangesAsync();
         return true;

@@ -3,6 +3,9 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Customers from './pages/Customers';
 import Leads from './pages/Leads';
+import LeadDetail from './pages/LeadDetail';
+import LeadAnalytics from './pages/LeadAnalytics';
+import PipelineKanban from './pages/PipelineKanban';
 import Tasks from './pages/Tasks';
 import Reports from './pages/Reports';
 import Login from './pages/Login';
@@ -17,6 +20,9 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="customers" element={<Customers />} />
         <Route path="leads" element={<Leads />} />
+        <Route path="leads/analytics" element={<LeadAnalytics />} />
+        <Route path="leads/:id" element={<LeadDetail />} />
+        <Route path="pipeline" element={<PipelineKanban />} />
         <Route path="tasks" element={<Tasks />} />
         <Route path="reports" element={<Reports />} />
         <Route path="activity" element={<ActivityLog />} />

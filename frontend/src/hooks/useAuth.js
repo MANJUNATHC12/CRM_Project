@@ -19,10 +19,14 @@ export function useAuth() {
       
       const fullName = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || payload.unique_name || payload.name || 'User';
 
+      const roles = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role || [];
+      const role = Array.isArray(roles) ? roles[0] : roles;
+
       setUser({
         name: fullName,
         email: payload.email || payload.sub || '',
-        roles: payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || payload.role || []
+        roles: Array.isArray(roles) ? roles : [roles],
+        role: role || 'User'
       });
       setIsAuthenticated(true);
     } catch (e) {
