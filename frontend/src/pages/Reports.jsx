@@ -24,11 +24,13 @@ async function get(path) {
 
 // ─── Colors ───────────────────────────────────────────────────────────────────
 const STAGE_COLORS = {
-  'New Leads':  '#64748b',
-  'Contacted':  '#3b82f6',
-  'Qualified':  '#6366f1',
-  'Proposal':   '#f59e0b',
-  'Won':        '#10b981',
+  'New':            '#64748b',
+  'Contacted':      '#3b82f6',
+  'Qualified':      '#6366f1',
+  'Proposal Sent':  '#f59e0b',
+  'Negotiation':    '#8b5cf6',
+  'Won':            '#10b981',
+  'Lost':           '#ef4444',
 };
 const PIE_PALETTE = ['#3b82f6','#6366f1','#f59e0b','#10b981','#64748b'];
 

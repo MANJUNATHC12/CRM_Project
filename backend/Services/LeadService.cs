@@ -31,7 +31,9 @@ public class LeadService : ILeadService
             Title = dto.Title,
             Company = dto.Company,
             Value = dto.Value,
-            Stage = dto.Stage
+            Stage = dto.Stage,
+            Email = dto.Email ?? string.Empty,
+            Phone = dto.Phone ?? string.Empty
         };
         var created = await _repo.AddLeadAsync(lead);
         return MapToDto(created);
@@ -46,6 +48,8 @@ public class LeadService : ILeadService
         lead.Company = dto.Company;
         lead.Value = dto.Value;
         lead.Stage = dto.Stage;
+        lead.Email = dto.Email ?? string.Empty;
+        lead.Phone = dto.Phone ?? string.Empty;
 
         await _repo.UpdateLeadAsync(lead);
         return MapToDto(lead);
@@ -65,6 +69,8 @@ public class LeadService : ILeadService
             Company = lead.Company,
             Value = lead.Value,
             Stage = lead.Stage,
+            Email = lead.Email,
+            Phone = lead.Phone,
             CreatedAt = lead.CreatedAt
         };
     }

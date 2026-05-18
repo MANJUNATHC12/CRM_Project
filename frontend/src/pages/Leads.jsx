@@ -1,4 +1,4 @@
-import { Plus, MoreHorizontal, X, Eye, Check, AlertTriangle } from 'lucide-react';
+import { Plus, MoreHorizontal, X, Eye, Check, AlertTriangle, Mail, Phone } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -13,7 +13,7 @@ export default function Leads() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
   const [selectedLead, setSelectedLead] = useState(null);
-  const [formData, setFormData] = useState({ title: '', company: '', value: 0, stage: 'New Leads' });
+  const [formData, setFormData] = useState({ title: '', company: '', value: 0, stage: 'New', email: '', phone: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, leadId: null });
@@ -24,11 +24,13 @@ export default function Leads() {
   };
 
   const stages = [
-    { title: 'New Leads', color: 'border-slate-500 bg-slate-50 text-slate-700' },
+    { title: 'New', color: 'border-slate-500 bg-slate-50 text-slate-700' },
     { title: 'Contacted', color: 'border-blue-500 bg-blue-50 text-blue-700' },
     { title: 'Qualified', color: 'border-indigo-500 bg-indigo-50 text-indigo-700' },
-    { title: 'Proposal', color: 'border-amber-500 bg-amber-50 text-amber-700' },
+    { title: 'Proposal Sent', color: 'border-amber-500 bg-amber-50 text-amber-700' },
+    { title: 'Negotiation', color: 'border-purple-500 bg-purple-50 text-purple-700' },
     { title: 'Won', color: 'border-emerald-500 bg-emerald-50 text-emerald-700' },
+    { title: 'Lost', color: 'border-red-500 bg-red-50 text-red-700' },
   ];
 
   const fetchLeads = async () => {
@@ -59,10 +61,24 @@ export default function Leads() {
   const openModal = (mode, stage, lead = null) => {
     setModalMode(mode);
     if (mode === 'edit' && lead) {
-       setFormData({ title: lead.title, company: lead.company, value: lead.value, stage: lead.stage });
+       setFormData({ 
+         title: lead.title, 
+         company: lead.company, 
+         value: lead.value, 
+         stage: lead.stage, 
+         email: lead.email || '', 
+         phone: lead.phone || '' 
+       });
        setSelectedLead(lead);
     } else {
-       setFormData({ title: '', company: '', value: 0, stage: stage || 'New Leads' });
+       setFormData({ 
+         title: '', 
+         company: '', 
+         value: 0, 
+         stage: stage || 'New', 
+         email: '', 
+         phone: '' 
+       });
        setSelectedLead(null);
     }
     setIsModalOpen(true);
@@ -148,7 +164,7 @@ export default function Leads() {
         <div>
           <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">Leads Pipeline</h1>
         </div>
-        <button onClick={() => openModal('add', 'New Leads')} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">
+        <button onClick={() => openModal('add', 'New')} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">
           Add Lead
         </button>
       </div>
@@ -180,7 +196,23 @@ export default function Leads() {
                        </div>
                     </div>
                     <h4 className="font-medium text-slate-900 text-sm mb-0.5">{lead.title}</h4>
-                    <p className="text-xs text-slate-500 mb-3">{lead.company || 'Unknown Company'}</p>
+                    <p className="text-xs text-slate-500 mb-2">{lead.company || 'Unknown Company'}</p>
+                    {(lead.email || lead.phone) && (
+                      <div className="space-y-1 mb-2.5 pt-1.5 border-t border-slate-100/50">
+                        {lead.email && (
+                          <div className="flex items-center gap-1.5 text-[10px] text-slate-500 truncate">
+                            <Mail size={10} className="text-slate-400 shrink-0" />
+                            <span className="truncate">{lead.email}</span>
+                          </div>
+                        )}
+                        {lead.phone && (
+                          <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                            <Phone size={10} className="text-slate-400 shrink-0" />
+                            <span>{lead.phone}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <div className="flex justify-between items-center pt-2 border-t border-slate-100">
                        <div className="w-5 h-5 rounded bg-slate-100 border border-slate-200 flex justify-center items-center text-[9px] font-medium text-slate-600">
                          {lead.company ? lead.company.charAt(0).toUpperCase() : 'U'}
@@ -212,7 +244,7 @@ export default function Leads() {
                 <label className="block text-xs font-medium text-slate-700 mb-1">Lead Title <span className="text-red-500">*</span></label>
                 <input required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="E.g. SEO Optimization" className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">Company</label>
                   <input type="text" value={formData.company} onChange={e => setFormData({...formData, company: e.target.value})} placeholder="TechNova" className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
@@ -220,6 +252,16 @@ export default function Leads() {
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">Deal Value ($)</label>
                   <input type="number" min="0" step="0.01" value={formData.value} onChange={e => setFormData({...formData, value: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Email Address</label>
+                  <input type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="client@company.com" className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Phone Number</label>
+                  <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+1 (555) 0199" className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
                 </div>
               </div>
               <div>

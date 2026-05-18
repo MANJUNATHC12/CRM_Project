@@ -56,7 +56,7 @@ public class ReportsController : ControllerBase
             .ToListAsync();
 
         // Ensure standard stage order
-        var order = new[] { "New Leads", "Contacted", "Qualified", "Proposal", "Won" };
+        var order = new[] { "New", "Contacted", "Qualified", "Proposal Sent", "Negotiation", "Won", "Lost" };
         var ordered = order.Select(s => data.FirstOrDefault(d => d.stage == s) ?? new { stage = s, count = 0, value = 0.0 });
         return Ok(ordered);
     }
@@ -159,10 +159,11 @@ public class ReportsController : ControllerBase
         // Calculate Revenue Forecast based on Pipeline Probabilities
         var forecast = allLeads.Where(l => l.Stage != "Won" && l.Stage != "Lost")
             .Sum(l => 
-                l.Stage == "New Leads" ? (double)l.Value * 0.1 :
+                l.Stage == "New" ? (double)l.Value * 0.1 :
                 l.Stage == "Contacted" ? (double)l.Value * 0.3 :
-                l.Stage == "Qualified" ? (double)l.Value * 0.6 :
-                l.Stage == "Proposal" ? (double)l.Value * 0.8 :
+                l.Stage == "Qualified" ? (double)l.Value * 0.5 :
+                l.Stage == "Proposal Sent" ? (double)l.Value * 0.7 :
+                l.Stage == "Negotiation" ? (double)l.Value * 0.85 :
                 (double)l.Value * 0.2);
 
         // Mocked Performance & Sources until full DB migration handles these fields

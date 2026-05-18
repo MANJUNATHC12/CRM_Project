@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Building2, Mail, Phone, Calendar, 
   DollarSign, CheckCircle2, Clock, MessageSquare, 
-  Activity, UserCircle2, Send, Plus
+  Activity, UserCircle2, Send, Plus, X, AlertTriangle
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
@@ -16,6 +16,60 @@ export default function LeadDetail() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('activity');
   const [newNote, setNewNote] = useState('');
+  
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [editForm, setEditForm] = useState({ title: '', company: '', value: 0, stage: '', email: '', phone: '' });
+
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleOpenEditModal = () => {
+    if (!lead) return;
+    setEditForm({
+      title: lead.title || '',
+      company: lead.company || '',
+      value: lead.value || 0,
+      stage: lead.stage || 'New',
+      email: lead.email || '',
+      phone: lead.phone || ''
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditFormSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`http://localhost:5146/api/leads/${id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('crm_token')}`
+        },
+        body: JSON.stringify({ ...editForm, value: parseFloat(editForm.value) || 0 })
+      });
+      if (response.status === 401) {
+        localStorage.removeItem('crm_token');
+        window.location.href = '/login';
+        return;
+      }
+      if (!response.ok) throw new Error('Failed to update lead');
+      
+      const updatedLead = await response.json();
+      setLead(updatedLead);
+      setIsEditModalOpen(false);
+      showToast('Lead profile updated successfully!');
+    } catch (err) {
+      console.error(err);
+      showToast(err.message, 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   // Mocking the extra data since the backend model doesn't fully support these yet.
   // In a real app, these would come attached to the GET /api/leads/{id} response.
@@ -123,7 +177,10 @@ export default function LeadDetail() {
             <option value="Won">Won</option>
             <option value="Lost">Lost</option>
           </select>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
+          <button 
+            onClick={handleOpenEditModal} 
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+          >
             Edit Profile
           </button>
         </div>
@@ -283,6 +340,70 @@ export default function LeadDetail() {
           </div>
         </div>
       </div>
+
+      {/* Edit Lead Modal */}
+      {isEditModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b border-slate-100 bg-slate-50 text-slate-900">
+               <h3 className="font-semibold text-slate-800">Edit Lead Profile</h3>
+               <button onClick={() => setIsEditModalOpen(false)} className="text-slate-400 hover:text-slate-600"><X size={20} /></button>
+            </div>
+            <form onSubmit={handleEditFormSubmit} className="p-4 space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Lead Title <span className="text-red-500">*</span></label>
+                <input required type="text" value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Company</label>
+                  <input type="text" value={editForm.company} onChange={e => setEditForm({...editForm, company: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Deal Value ($)</label>
+                  <input type="number" min="0" step="0.01" value={editForm.value} onChange={e => setEditForm({...editForm, value: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Email Address</label>
+                  <input type="email" value={editForm.email} onChange={e => setEditForm({...editForm, email: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Phone Number</label>
+                  <input type="tel" value={editForm.phone} onChange={e => setEditForm({...editForm, phone: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Pipeline Stage</label>
+                <select value={editForm.stage} onChange={e => setEditForm({...editForm, stage: e.target.value})} className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                   <option value="New">New</option>
+                   <option value="Contacted">Contacted</option>
+                   <option value="Qualified">Qualified</option>
+                   <option value="Proposal Sent">Proposal Sent</option>
+                   <option value="Negotiation">Negotiation</option>
+                   <option value="Won">Won</option>
+                   <option value="Lost">Lost</option>
+                </select>
+              </div>
+              <div className="pt-4 border-t border-slate-100 flex justify-end gap-2 mt-6">
+                 <button type="button" onClick={() => setIsEditModalOpen(false)} disabled={isSubmitting} className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors disabled:opacity-50">Cancel</button>
+                 <button type="submit" disabled={isSubmitting} className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 flex items-center gap-2">
+                   {isSubmitting ? 'Saving...' : 'Save Changes'}
+                 </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Toast Notification */}
+      {toast && (
+        <div className={`fixed bottom-6 right-6 z-[100] flex items-center gap-2 px-4 py-3 rounded-lg shadow-xl text-sm font-medium animate-in slide-in-from-bottom-5 ${toast.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
+          {toast.type === 'success' ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+          {toast.msg}
+        </div>
+      )}
     </div>
   );
 }

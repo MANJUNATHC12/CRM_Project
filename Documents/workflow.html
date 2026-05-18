@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusCRM - Interactive System Workflow & Module Verification Guide</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131b2e;
+            --bg-tertiary: #1e293b;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --accent-success: #10b981;
+            --accent-success-glow: rgba(16, 185, 129, 0.15);
+            --accent-danger: #ef4444;
+            --accent-danger-glow: rgba(239, 68, 68, 0.15);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Background Decorative Gradients */
+        .glow-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .glow-1 {
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(80px);
+        }
+        .glow-2 {
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, rgba(0,0,0,0) 70%);
+            filter: blur(80px);
+        }
+
+        /* Container & Navigation */
+        .wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        header h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, #fff 30%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        /* Grid Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-links a.active {
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 3px solid var(--accent);
+            font-weight: 600;
+        }
+
+        /* Content Modules */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 3.5rem;
+        }
+
+        .module-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .module-section:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .module-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, rgba(59, 130, 246, 0.1) 100%);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-b: 1px solid var(--border-color);
+            padding-bottom: 1.5rem;
+        }
+
+        .module-title-group h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .module-title-group p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Steps Layout */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 1.25rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: var(--transition);
+        }
+
+        .step-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-glow);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            shrink-0: 1;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .step-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Technical badges / Details */
+        .tech-box {
+            margin-top: 1.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 1.25rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .tech-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 0.25rem 0.6rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Status Colors */
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .status-verified {
+            background: var(--accent-success-glow);
+            color: var(--accent-success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 6rem;
+            padding-top: 3rem;
+            border-t: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+            }
+        }
+
+        /* RBAC Table styling */
+        .rbac-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .rbac-table th, .rbac-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        .rbac-table th {
+            background: rgba(255, 255, 255, 0.03);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .rbac-table tr:hover td {
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .role-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .role-admin { color: #3b82f6; }
+        .role-manager { color: #10b981; }
+        .role-sales { color: #8b5cf6; }
+
+        .perm-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .perm-yes { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .perm-no { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .perm-partial { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+    </style>
+</head>
+<body>
+
+    <div class="glow-overlay">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <div class="wrapper">
+        <header>
+            <span class="tag">System Blueprint</span>
+            <h1>NexusCRM Workspace Blueprint</h1>
+            <p>A Developer-Grade Verification & Step-by-Step Module Check Workflow Guide</p>
+        </header>
+
+        <div class="main-layout">
+            <nav class="sidebar">
+                <h3 class="sidebar-title">Verification Modules</h3>
+                <ul class="nav-links">
+                    <li><a href="#auth-sec" class="active">1. Authentication & Guard</a></li>
+                    <li><a href="#leads-sec">2. Leads Pipeline</a></li>
+                    <li><a href="#detail-sec">3. Detailed Lead Profiler</a></li>
+                    <li><a href="#customer-sec">4. Customer Center</a></li>
+                    <li><a href="#analytics-sec">5. Analytics & Reports</a></li>
+                    <li><a href="#task-sec">6. Task Manager</a></li>
+                    <li><a href="#rbac-sec">7. Access Control Matrix</a></li>
+                </ul>
+            </nav>
+
+            <main class="content">
+                
+                <!-- SECTION 1: AUTHENTICATION -->
+                <section id="auth-sec" class="module-section">
+                    <div class="module-header">
+                        <div class="module-title-group">
+                            <h2>1. User Authentication & Guard Rules</h2>
+                            <p>Verify role permissions, secure session storage, and router guards.</p>
+                        </div>
+                        <span class="status-badge status-verified">● Active Verification</span>
+                    </div>
+
+                    <div class="steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Automatic Route Blocking</h4>
+                                <p class="step-desc">Open browser and navigate to <code>http://localhost:5173/</code>. Confirm that without a valid JWT, you are instantly redirected to the <code>/login</code> path.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Form Input Validations</h4>
+                                <p class="step-desc">Click the Login submit button with empty textboxes. Confirm that native validation alerts instruct you to input missing values.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Backend Credentials Denial</h4>
+                                <p class="step-desc">Input a fake credentials combo and submit. Verify that a beautiful red Toast slides in with a customized API error message.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Successful Session Creation</h4>
+                                <p class="step-desc">Login with valid user credentials. Observe the login button transforming into "Logging in..." loading state, and verify successful placement of <code>crm_token</code> in the LocalStorage.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-box">
+                        <h5 class="tech-title">Module Tech Stack</h5>
+                        <ul class="tech-list">
+                            <li class="tech-badge">AuthContext.jsx</li>
+                            <li class="tech-badge">AuthController.cs</li>
+                            <li class="tech-badge">localStorage.setItem</li>
+                            <li class="tech-badge">JWT Token</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: LEADS PIPELINE -->
+                <section id="leads-sec" class="module-section">
+                    <div class="module-header">
+                        <div class="module-title-group">
+                            <h2>2. Leads Pipeline Kanban & Grid</h2>
+                            <p>Verify smooth drag-and-drop mechanics, empty column target indicators, and persistence.</p>
+                        </div>
+                        <span class="status-badge status-verified">● Active Verification</span>
+                    </div>
+
+                    <div class="steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Board Initialization</h4>
+                                <p class="step-desc">Select <strong>Pipeline</strong> in your left menu. Verify the 7 columns: New, Contacted, Qualified, Proposal Sent, Negotiation, Won, and Lost have counts and values.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Empty Container Drop Targets</h4>
+                                <p class="step-desc">Drag any lead card into a column with 0 entries. Confirm the column glows with a dashed-line indicator and accurately accepts the drop.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">DND Visual Smoothness</h4>
+                                <p class="step-desc">Drag a card across columns. Observe the drag-overlay producing a clean shadow scale transition as you navigate.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4 class="step-title">API Persistence Verification</h4>
+                                <p class="step-desc">Drop a card in a new column. Wait for the success Toast, and reload the browser page. Confirm that the card stays positioned exactly where you left it.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-box">
+                        <h5 class="tech-title">Module Tech Stack</h5>
+                        <ul class="tech-list">
+                            <li class="tech-badge">PipelineKanban.jsx</li>
+                            <li class="tech-badge">@dnd-kit/core</li>
+                            <li class="tech-badge">useDroppable</li>
+                            <li class="tech-badge">LeadsController.cs (PUT)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: LEAD DETAIL PROFILER -->
+                <section id="detail-sec" class="module-section">
+                    <div class="module-header">
+                        <div class="module-title-group">
+                            <h2>3. Deep Lead Detail & Profiler</h2>
+                            <p>Verify nested history tracking, timeline events, notes collection, and deep linking.</p>
+                        </div>
+                        <span class="status-badge status-verified">● Active Verification</span>
+                    </div>
+
+                    <div class="steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Click Propagation Safety</h4>
+                                <p class="step-desc">Inside the Kanban board, click the Eye icon on a lead card. Verify it opens the Lead Details page immediately without triggering a card drag event.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Unified Profile Metric Grid</h4>
+                                <p class="step-desc">Verify that the Lead Header correctly displays name, company, date created, and estimated deal value.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Notes System Validation</h4>
+                                <p class="step-desc">Type an internal comment in the Note input field and click <strong>Add Note</strong>. Verify the note instantly aggregates on the screen timeline without a manual refresh.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-box">
+                        <h5 class="tech-title">Module Tech Stack</h5>
+                        <ul class="tech-list">
+                            <li class="tech-badge">LeadDetail.jsx</li>
+                            <li class="tech-badge">Timeline.jsx</li>
+                            <li class="tech-badge">ActivityTimeline</li>
+                            <li class="tech-badge">NotesController.cs</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: CUSTOMER CENTER -->
+                <section id="customer-sec" class="module-section">
+                    <div class="module-header">
+                        <div class="module-title-group">
+                            <h2>4. Customer Center & CRUD Grid</h2>
+                            <p>Verify client onboarding, paginated rendering, live filters, and warning popups.</p>
+                        </div>
+                        <span class="status-badge status-verified">● Active Verification</span>
+                    </div>
+
+                    <div class="steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Dynamic Grid Filter</h4>
+                                <p class="step-desc">Navigate to <strong>Customers</strong>. Type a customer's name or email in the search bar and press <strong>Enter</strong>. Verify only matched rows display.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Duplicate Submission Block</h4>
+                                <p class="step-desc">Click <strong>Add Customer</strong>, input details, and hit save. Verify the button changes to "Saving..." and locks clicking until successfully processed by the API.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Custom Validation Warning Popup</h4>
+                                <p class="step-desc">Click the Trash icon next to any Customer row. Confirm that a custom alert overlay with a bold Red Warning Triangle renders instead of the default browser prompt.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-box">
+                        <h5 class="tech-title">Module Tech Stack</h5>
+                        <ul class="tech-list">
+                            <li class="tech-badge">Customers.jsx</li>
+                            <li class="tech-badge">CustomModal.jsx</li>
+                            <li class="tech-badge">AlertTriangle</li>
+                            <li class="tech-badge">CustomerController.cs</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- SECTION 5: ANALYTICS & REPORTS -->
+                <section id="analytics-sec" class="module-section">
+                    <div class="module-header">
+                        <div class="module-title-group">
+                            <h2>5. Analytics & Dynamic Reporting Graphs</h2>
+                            <p>Verify weighted forecasting values, interactive tooltips, and source analysis cell distributions.</p>
+                        </div>
+                        <span class="status-badge status-verified">● Active Verification</span>
+                    </div>
+
+                    <div class="steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Lead Analytics Dashboard Overview</h4>
+                                <p class="step-desc">Navigate to <strong>Lead Analytics</strong> in Sidebar. Confirm total pipeline value, win ratios, and weighted values calculate instantly.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Weighted Value Check</h4>
+                                <p class="step-desc">Add a lead with value $10,000 in the "Negotiation" stage. Go to Lead Analytics and confirm the forecast increases exactly by **$8,500** (Negotiation value is weighted at 85% probability).</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Interactive Tooltips rendering</h4>
+                                <p class="step-desc">Hover over the Won/Lost radial graph cells and sales rep performance bars. Confirm accurate tooltips dynamically render.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-box">
+                        <h5 class="tech-title">Module Tech Stack</h5>
+                        <ul class="tech-list">
+                            <li class="tech-badge">LeadAnalytics.jsx</li>
+                            <li class="tech-badge">ReportsController.cs</li>
+                            <li class="tech-badge">Recharts RadialBar</li>
+                            <li class="tech-badge">Recharts BarChart</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- SECTION 6: TASK MANAGER -->
+                <section id="task-sec" class="module-section">
+                    <div class="module-header">
+                        <div class="module-title-group">
+                            <h2>6. Task & Scheduler Hub</h2>
+                            <p>Verify check-toggling, high/medium/low priority badges, and standard validation modal.</p>
+                        </div>
+                        <span class="status-badge status-verified">● Active Verification</span>
+                    </div>
+
+                    <div class="steps">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Task Completion Toggle</h4>
+                                <p class="step-desc">Navigate to <strong>Tasks</strong>. Click the empty checkbox. Verify the text dynamically displays as strikethrough slate text and gets marked as completed.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Hover Delete Trigger</h4>
+                                <p class="step-desc">Hover over any task item. Verify the Trash icon smoothly fades in on the right margin.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4 class="step-title">Custom validation modal check</h4>
+                                <p class="step-desc">Click the Trash icon. Verify the customized delete confirmation card pops up smoothly, allowing you to either cancel or complete deletion securely.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tech-box">
+                        <h5 class="tech-title">Module Tech Stack</h5>
+                        <ul class="tech-list">
+                            <li class="tech-badge">Tasks.jsx</li>
+                            <li class="tech-badge">Trash2</li>
+                            <li class="tech-badge">useState</li>
+                            <li class="tech-badge">CSS Transition</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- SECTION 7: ACCESS CONTROL MATRIX -->
+                <section id="rbac-sec" class="module-section">
+                    <div class="module-header">
+                        <div class="module-title-group">
+                            <h2>7. Role-Based Access Control (RBAC) Matrix</h2>
+                            <p>Verify permission scopes, creation rights, and visibility levels across all CRM modules.</p>
+                        </div>
+                        <span class="status-badge status-verified">● Active Verification</span>
+                    </div>
+
+                    <p class="step-desc" style="margin-bottom: 1.5rem;">
+                        NexusCRM implements strict Role-Based Access Control (RBAC) using JWT claims. 
+                        The tables below outline who is allowed to perform operations on each module:
+                    </p>
+
+                    <table class="rbac-table">
+                        <thead>
+                            <tr>
+                                <th>Module & Action</th>
+                                <th><span class="role-indicator role-admin">■ Administrator</span></th>
+                                <th><span class="role-indicator role-manager">■ Sales Manager</span></th>
+                                <th><span class="role-indicator role-sales">■ Sales Rep</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- LEADS ACCESS -->
+                            <tr>
+                                <td>
+                                    <strong>Leads Management</strong><br>
+                                    <span style="font-size:0.8rem; color:var(--text-muted);">Sourcing opportunities</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-yes">Full Access</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create, view all, update all, reassign, and delete leads.</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-yes">Full Access</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create, view all, assign to reps, and delete dead leads.</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-partial">Limited</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create new leads, view and drag/update assigned leads only. Cannot delete.</span>
+                                </td>
+                            </tr>
+                            <!-- CUSTOMERS ACCESS -->
+                            <tr>
+                                <td>
+                                    <strong>Customer Hub</strong><br>
+                                    <span style="font-size:0.8rem; color:var(--text-muted);">Client relationship data</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-yes">Full Access</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create, view all, edit all fields, and delete records.</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-yes">Full Access</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create, view all, and edit profiles. Deletion blocked for safety.</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-partial">Limited</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">View assigned clients only. Can update basic contact details. Deletion blocked.</span>
+                                </td>
+                            </tr>
+                            <!-- TASKS ACCESS -->
+                            <tr>
+                                <td>
+                                    <strong>Tasks & Scheduling</strong><br>
+                                    <span style="font-size:0.8rem; color:var(--text-muted);">Reminders & To-Dos</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-yes">Full Access</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create for anyone, view all, edit all, and delete.</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-yes">Full Access</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create and assign tasks to any Sales Rep. Full tracking.</span>
+                                </td>
+                                <td>
+                                    <span class="perm-badge perm-partial">Self Only</span><br>
+                                    <span style="font-size:0.8rem; color:var(--text-secondary);">Can create tasks for self, view and complete assigned tasks only.</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="tech-box" style="margin-top: 2rem;">
+                        <h5 class="tech-title">Security Architecture</h5>
+                        <ul class="tech-list">
+                            <li class="tech-badge">AuthorizeAttribute</li>
+                            <li class="tech-badge">ClaimsPrincipal</li>
+                            <li class="tech-badge">User.IsInRole()</li>
+                            <li class="tech-badge">JWT Payload</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- TEST CREDENTIALS & SEED DATA SECTION -->
+                <section id="seed-data" class="module-section card" style="margin-top: 2.5rem;">
+                    <h2 class="section-title">
+                        <span class="step-badge">5</span> Default Test Credentials & Seed Datasets
+                    </h2>
+                    <p class="step-desc">
+                        A pristine SQLite database is automatically generated and populated with professional-grade test credentials and complete system datasets upon starting the application server. Use these credentials to test Role-Based Access Control (RBAC) live:
+                    </p>
+
+                    <div style="margin-top: 2rem;">
+                        <h4 style="color:var(--text-primary); margin-bottom: 1rem;">🔑 Default User Accounts</h4>
+                        <table class="rbac-table">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Username (Email)</th>
+                                    <th>Password</th>
+                                    <th>Assignee Full Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="role-indicator role-admin" style="font-weight:700;">■ System Admin</span></td>
+                                    <td><code>admin@crm.com</code></td>
+                                    <td><code>Admin@123</code></td>
+                                    <td>System Admin</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="role-indicator role-manager" style="font-weight:700;">■ Sales Manager</span></td>
+                                    <td><code>manager@crm.com</code></td>
+                                    <td><code>Manager@123</code></td>
+                                    <td>Jane Manager</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="role-indicator role-sales" style="font-weight:700;">■ Sales Rep</span></td>
+                                    <td><code>sales@crm.com</code></td>
+                                    <td><code>Sales@123</code></td>
+                                    <td>John Sales</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 2.5rem;">
+                        <h4 style="color:var(--text-primary); margin-bottom: 1rem;">📁 Prepopulated Database Datasets</h4>
+                        
+                        <h5 style="color:var(--accent); margin-bottom: 0.5rem; margin-top: 1rem;">1. Customers List Module</h5>
+                        <table class="rbac-table">
+                            <thead>
+                                <tr>
+                                    <th>Client Name</th>
+                                    <th>Email Address</th>
+                                    <th>Phone Number</th>
+                                    <th>Company</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Acme Global Solutions</td>
+                                    <td><code>billing@acmeglobal.com</code></td>
+                                    <td>+1 (555) 456-1122</td>
+                                    <td>Acme Corp</td>
+                                    <td><span class="perm-badge perm-yes">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>TechGiant Solutions LLC</td>
+                                    <td><code>procurement@techgiant.io</code></td>
+                                    <td>+1 (555) 987-6543</td>
+                                    <td>TechGiant</td>
+                                    <td><span class="perm-badge perm-yes">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Apex Creative Group</td>
+                                    <td><code>hello@apexcreative.net</code></td>
+                                    <td>+1 (555) 321-7654</td>
+                                    <td>Apex Creative</td>
+                                    <td><span class="perm-badge perm-partial">Inactive</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Nova Health Systems</td>
+                                    <td><code>contact@novahealth.org</code></td>
+                                    <td>+1 (555) 888-0019</td>
+                                    <td>Nova Health</td>
+                                    <td><span class="perm-badge perm-yes">Active</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h5 style="color:var(--accent); margin-bottom: 0.5rem; margin-top: 1.5rem;">2. Pipeline Leads (Kanban Board)</h5>
+                        <table class="rbac-table">
+                            <thead>
+                                <tr>
+                                    <th>Deal Title</th>
+                                    <th>Company</th>
+                                    <th>Deal Value</th>
+                                    <th>Stage</th>
+                                    <th>Contact Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>SEO Optimization Campaign</td>
+                                    <td>Nova Dynamics</td>
+                                    <td><strong>$4,500</strong></td>
+                                    <td>New</td>
+                                    <td><code>marketing@novadynamics.com</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Custom ERP Migration</td>
+                                    <td>Alpha Manufacturing</td>
+                                    <td><strong>$48,000</strong></td>
+                                    <td>Contacted</td>
+                                    <td><code>it-ops@alphaman.com</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Mobile App Design Services</td>
+                                    <td>ByteLabs</td>
+                                    <td><strong>$12,500</strong></td>
+                                    <td>Qualified</td>
+                                    <td><code>contact@bytelabs.dev</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Cloud Migration Services Plan</td>
+                                    <td>CloudStream Inc</td>
+                                    <td><strong>$35,000</strong></td>
+                                    <td>Proposal Sent</td>
+                                    <td><code>inquiries@cloudstream.co</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Security Audit Package</td>
+                                    <td>SafeNet Solutions</td>
+                                    <td><strong>$8,900</strong></td>
+                                    <td>Negotiation</td>
+                                    <td><code>security@safenet.io</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Dedicated Staffing Partnership</td>
+                                    <td>TalentForce</td>
+                                    <td><strong>$75,000</strong></td>
+                                    <td>Won</td>
+                                    <td><code>hr@talentforce.com</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 NexusCRM. All developer blueprints and validation workflows are configured and verified live.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth Active Class Navigation Switch
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const sections = document.querySelectorAll('.module-section');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
