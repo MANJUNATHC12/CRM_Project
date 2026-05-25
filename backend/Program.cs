@@ -279,62 +279,6 @@ using (var scope = app.Services.CreateScope())
     }
 
     db.SaveChanges();
-
-    // Seed ActivityLogs if empty
-    if (!db.ActivityLogs.Any())
-    {
-        var adminUserInstance = db.Users.FirstOrDefault(u => u.Email == "admin@crm.com");
-        var salesUserInstance = db.Users.FirstOrDefault(u => u.Email == "sales@crm.com");
-        var managerUserInstance = db.Users.FirstOrDefault(u => u.Email == "manager@crm.com");
-        
-        if (adminUserInstance != null && salesUserInstance != null && managerUserInstance != null)
-        {
-            db.ActivityLogs.AddRange(new List<ActivityLog>
-            {
-                new ActivityLog
-                {
-                    Action = "Created",
-                    EntityType = "Lead",
-                    Details = "New lead added for Acme Corp",
-                    UserId = adminUserInstance.Id,
-                    CreatedAt = DateTime.UtcNow.AddDays(-10)
-                },
-                new ActivityLog
-                {
-                    Action = "Updated",
-                    EntityType = "Lead",
-                    Details = "Moved Custom ERP Migration to Contacted",
-                    UserId = salesUserInstance.Id,
-                    CreatedAt = DateTime.UtcNow.AddDays(-8)
-                },
-                new ActivityLog
-                {
-                    Action = "Created",
-                    EntityType = "Customer",
-                    Details = "Added customer: TechGiant Solutions LLC",
-                    UserId = managerUserInstance.Id,
-                    CreatedAt = DateTime.UtcNow.AddDays(-5)
-                },
-                new ActivityLog
-                {
-                    Action = "Updated",
-                    EntityType = "Customer",
-                    Details = "Updated details for Nova Health Systems",
-                    UserId = salesUserInstance.Id,
-                    CreatedAt = DateTime.UtcNow.AddDays(-2)
-                },
-                new ActivityLog
-                {
-                    Action = "Deleted",
-                    EntityType = "Lead",
-                    Details = "Removed dead lead: Obsolete Hardware Upgrade",
-                    UserId = adminUserInstance.Id,
-                    CreatedAt = DateTime.UtcNow.AddDays(-1)
-                }
-            });
-            db.SaveChanges();
-        }
-    }
 }
 
 // Configure the HTTP request pipeline.

@@ -74,7 +74,6 @@ public class AuthController : ControllerBase
         var claims = new List<Claim>
         {
             new Claim("Id", user.Id),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.FullName),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
