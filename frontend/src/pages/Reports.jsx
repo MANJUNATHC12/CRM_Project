@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import API_BASE_URL from '../api';
 import {
   AreaChart, Area,
   BarChart, Bar,
@@ -13,7 +14,7 @@ import {
 } from 'lucide-react';
 
 // ─── API ──────────────────────────────────────────────────────────────────────
-const API = 'http://localhost:5146/api/reports';
+const API = '${API_BASE_URL}/api/reports';
 const headers = () => ({ Authorization: `Bearer ${localStorage.getItem('crm_token')}` });
 
 async function get(path) {

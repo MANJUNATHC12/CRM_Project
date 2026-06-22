@@ -82,7 +82,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:5173",
-            "https://crm-project-gules-pi.vercel.app"
+            "https://crm-project-gules-pi.vercel.app",
+            "https://crm-project-h4hi.onrender.com"
         )
         .AllowAnyHeader()
         .AllowAnyMethod();

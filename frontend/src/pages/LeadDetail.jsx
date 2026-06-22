@@ -46,7 +46,7 @@ export default function LeadDetail() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:5146/api/leads/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/leads/${id}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export default function LeadDetail() {
   useEffect(() => {
     const fetchLead = async () => {
       try {
-        const response = await fetch(`http://localhost:5146/api/leads/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/leads/${id}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` }
         });
         if (response.ok) {
@@ -117,7 +117,7 @@ export default function LeadDetail() {
     setLead(prev => ({ ...prev, stage: newStage }));
     
     try {
-      await fetch(`http://localhost:5146/api/leads/${id}`, {
+      await fetch(`${API_BASE_URL}/api/leads/${id}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',

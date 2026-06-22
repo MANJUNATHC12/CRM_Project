@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 // ─── API Helper ──────────────────────────────────────────────────────────────
-const API = 'http://localhost:5146/api/settings';
+const API = '${API_BASE_URL}/api/settings';
 const token = () => localStorage.getItem('crm_token');
 
 async function fetchGroup(group) {
@@ -412,7 +412,7 @@ function RolesAccessSection() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:5146/api/users', { headers: { Authorization: `Bearer ${token()}` } })
+    fetch('${API_BASE_URL}/api/users', { headers: { Authorization: `Bearer ${token()}` } })
       .then(r => r.json())
       .then(setUsers)
       .catch(() => showToast('Failed to load users', 'error'))
@@ -422,7 +422,7 @@ function RolesAccessSection() {
   const changeRole = async (userId, newRole) => {
     setProcessingId(userId);
     try {
-      const res = await fetch('http://localhost:5146/api/users/assign-role', {
+      const res = await fetch('${API_BASE_URL}/api/users/assign-role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token()}` },
         body: JSON.stringify({ userId, role: newRole })
@@ -441,7 +441,7 @@ function RolesAccessSection() {
     setProcessingId(userId);
     setUserToDelete(null);
     try {
-      const res = await fetch(`http://localhost:5146/api/users/${userId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
         method: 'DELETE', headers: { Authorization: `Bearer ${token()}` }
       });
       if (!res.ok) throw new Error('Delete failed');

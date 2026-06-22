@@ -2,6 +2,8 @@ import { Zap, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import API_BASE_URL from '../api';
+
 export default function Login() {
   const [isRegister, setIsRegister] = useState(false);
   const [formData, setFormData] = useState({ fullName: '', email: '', password: '' });
@@ -26,7 +28,7 @@ export default function Login() {
 
   const handleExternalLogin = (provider) => {
     const returnUrl = window.location.origin;
-    window.location.href = `http://localhost:5146/api/auth/external-login/${provider}?returnUrl=${encodeURIComponent(returnUrl)}`;
+    window.location.href = `${API_BASE_URL}/api/auth/external-login/${provider}?returnUrl=${encodeURIComponent(returnUrl)}`;
   };
 
 
@@ -41,8 +43,8 @@ export default function Login() {
     setLoading(true);
 
     const url = isRegister 
-       ? 'http://localhost:5146/api/auth/register' 
-       : 'http://localhost:5146/api/auth/login';
+       ? '${API_BASE_URL}/api/auth/register' 
+       : '${API_BASE_URL}/api/auth/login';
 
     try {
       const response = await fetch(url, {
@@ -197,7 +199,7 @@ export default function Login() {
                     setError(null);
                     setSuccess(null);
                     setLoading(true);
-                    fetch('http://localhost:5146/api/auth/forgot-password', {
+                    fetch('${API_BASE_URL}/api/auth/forgot-password', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email: formData.email })

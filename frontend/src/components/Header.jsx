@@ -1,4 +1,5 @@
 import { Bell, Search, User, LogOut, FileText } from 'lucide-react';
+import API_BASE_URL from '../api';
 import { useAuth } from '../hooks/useAuth';
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
@@ -28,8 +29,8 @@ export default function Header() {
         const token = localStorage.getItem('crm_token');
         if (!token) return;
         const [notifRes, countRes] = await Promise.all([
-          fetch('http://localhost:5146/api/notifications', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('http://localhost:5146/api/notifications/unread-count', { headers: { 'Authorization': `Bearer ${token}` } })
+          fetch('${API_BASE_URL}/api/notifications', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('${API_BASE_URL}/api/notifications/unread-count', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         if (notifRes.ok) setNotifications(await notifRes.json());
         if (countRes.ok) setUnreadCount((await countRes.json()).count);
@@ -46,7 +47,7 @@ export default function Header() {
 
   const markAllAsRead = async () => {
     try {
-       await fetch('http://localhost:5146/api/notifications/read-all', { 
+       await fetch('${API_BASE_URL}/api/notifications/read-all', { 
            method: 'PUT',
            headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` } 
        });
