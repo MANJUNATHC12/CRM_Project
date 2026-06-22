@@ -6,6 +6,8 @@ using Crm.Api.Models;
 using System.Security.Claims;
 using Crm.Api.DTOs;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Crm.Api.Controllers;
 
 [ApiController]
@@ -23,7 +25,53 @@ public class AuthController : ControllerBase
         _configuration = configuration;
     }
 
-    // Existing Register, Login, ForgotPassword methods unchanged ...
+    // Register a new user
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                FullName = model.FullName
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            // Assign default role (e.g., Sales)
+            await _userManager.AddToRoleAsync(user, "Sales");
+
+            var token = await GenerateJwtToken(user);
+            return Ok(new { token });
+        }
+
+        // Login existing user
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+                return Unauthorized();
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, lockoutOnFailure: false);
+            if (!result.Succeeded)
+                return Unauthorized();
+
+            var token = await GenerateJwtToken(user);
+            return Ok(new { token });
+        }
+
+        // Existing Register, Login, ForgotPassword methods unchanged ...
 
     [HttpGet("external-login/{provider}")]
     public IActionResult ExternalLogin(string provider, [FromQuery] string returnUrl = "/")
