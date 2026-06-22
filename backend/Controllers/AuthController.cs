@@ -120,6 +120,34 @@ public class AuthController : ControllerBase
         return Redirect($"{returnUrl}?token={token}");
     }
 
+
+
+
+    [HttpGet("test")]
+[AllowAnonymous]
+public async Task<IActionResult> Test()
+{
+    var user = await _userManager.FindByEmailAsync("admin@crm.com");
+    if (user == null) return NotFound("User not found");
+    
+    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+    var result = await _userManager.ResetPasswordAsync(user, token, "Admin@123");
+    
+    if (result.Succeeded)
+        return Ok("Password reset successfully");
+    
+    return BadRequest(result.Errors);
+}
+
+
+
+
+
+
+
+
+
+
     // Existing GenerateJwtToken method unchanged
     private async Task<string> GenerateJwtToken(ApplicationUser user)
     {
