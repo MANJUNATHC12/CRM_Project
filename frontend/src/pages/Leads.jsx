@@ -2,6 +2,7 @@ import { Plus, MoreHorizontal, X, Eye, Check, AlertTriangle, Mail, Phone } from 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import API_BASE_URL from './api';
 
 export default function Leads() {
   const { user } = useAuth();
@@ -36,7 +37,7 @@ export default function Leads() {
   const fetchLeads = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5146/api/leads', {
+      const response = await fetch('${API_BASE_URL}/api/leads', {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` }
       });
       if (response.status === 401) {
@@ -88,7 +89,7 @@ export default function Leads() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const url = modalMode === 'add' ? `http://localhost:5146/api/leads` : `http://localhost:5146/api/leads/${selectedLead.id}`;
+      const url = modalMode === 'add' ? `${API_BASE_URL}/api/leads` : `${API_BASE_URL}/api/leads/${selectedLead.id}`;
       const method = modalMode === 'add' ? 'POST' : 'PUT';
       
       const payload = { ...formData, value: parseFloat(formData.value) || 0 };
@@ -131,7 +132,7 @@ export default function Leads() {
     const id = deleteConfirm.leadId;
     setIsSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:5146/api/leads/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/leads/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` }
       });
