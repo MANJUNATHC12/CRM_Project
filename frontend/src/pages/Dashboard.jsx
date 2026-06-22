@@ -1,22 +1,24 @@
 import { ArrowUpRight, ArrowDownRight, Users, DollarSign, Target, Activity, MoreHorizontal, Calendar, Clock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
+
 export default function Dashboard() {
   const { user } = useAuth();
   const firstName = user.name.split(' ')[0];
 
   const metrics = [
-    { title: 'Total Revenue', value: '$124,563.00', change: '+14.5%', isUp: true, icon: DollarSign, color: 'text-slate-700', bg: 'bg-slate-100' },
-    { title: 'Active Deals', value: '45', change: '+5.2%', isUp: true, icon: Target, color: 'text-slate-700', bg: 'bg-slate-100' },
-    { title: 'New Contacts', value: '1,204', change: '-2.1%', isUp: false, icon: Users, color: 'text-slate-700', bg: 'bg-slate-100' },
-    { title: 'Win Rate', value: '64.8%', change: '+8.4%', isUp: true, icon: Activity, color: 'text-slate-700', bg: 'bg-slate-100' },
+    { title: 'Total Revenue', value: '$201,900.00', change: '+0%', isUp: true, icon: DollarSign, color: 'text-slate-700', bg: 'bg-slate-100' },
+    { title: 'Active Deals', value: '6', change: '+0%', isUp: true, icon: Target, color: 'text-slate-700', bg: 'bg-slate-100' },
+    { title: 'New Contacts', value: '4', change: '+0%', isUp: true, icon: Users, color: 'text-slate-700', bg: 'bg-slate-100' },
+    { title: 'Win Rate', value: '14%', change: '+0%', isUp: true, icon: Activity, color: 'text-slate-700', bg: 'bg-slate-100' }
   ];
+
 
   const recentDeals = [
     { id: 1, name: 'Acme Corp Redevelopment', company: 'Acme Corp', amount: '$45,000', status: 'In Progress', statusColor: 'bg-blue-50 text-blue-700 border-blue-200', date: 'Oct 24, 2026' },
     { id: 2, name: 'Global Tech CRM Integration', company: 'Global Tech', amount: '$120,000', status: 'Won', statusColor: 'bg-emerald-50 text-emerald-700 border-emerald-200', date: 'Oct 22, 2026' },
     { id: 3, name: 'Stark Industries AI', company: 'Stark Ind.', amount: '$250,000', status: 'Review', statusColor: 'bg-amber-50 text-amber-700 border-amber-200', date: 'Oct 20, 2026' },
-    { id: 4, name: 'Wayne Ent. Security', company: 'Wayne Ent.', amount: '$85,000', status: 'Lost', statusColor: 'bg-red-50 text-red-700 border-red-200', date: 'Oct 15, 2026' },
+    { id: 4, name: 'Wayne Ent. Security', company: 'Wayne Ent.', amount: '$85,000', status: 'Lost', statusColor: 'bg-red-50 text-red-700 border-red-200', date: 'Oct 15, 2026' }
   ];
 
   return (

@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM Project — Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d0d;
+    --paper: #faf8f3;
+    --cream: #f2ede0;
+    --rust: #c0392b;
+    --gold: #b8922a;
+    --steel: #2c3e50;
+    --muted: #7f8c8d;
+    --border: #d5cfc0;
+    --accent: #e8dfc8;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--steel);
+    color: #ccc;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 28px 0 40px;
+    border-right: 1px solid #1a2533;
+  }
+
+  .sidebar-brand {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid #3d5166;
+    margin-bottom: 16px;
+  }
+
+  .sidebar-brand span {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.3px;
+  }
+
+  .sidebar-brand small {
+    font-size: 11px;
+    color: #7f9ab2;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .nav-section-label {
+    padding: 10px 24px 4px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #4e6a82;
+    font-weight: 600;
+  }
+
+  .sidebar a {
+    display: block;
+    padding: 7px 24px;
+    color: #8fafc9;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar a:hover,
+  .sidebar a.active {
+    color: #fff;
+    background: rgba(255,255,255,0.05);
+    border-left-color: var(--gold);
+  }
+
+  /* MAIN */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--steel);
+    color: #fff;
+    padding: 80px 60px 70px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: 'CRM';
+    position: absolute;
+    right: -20px;
+    top: -40px;
+    font-family: 'Playfair Display', serif;
+    font-size: 280px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: var(--gold);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 54px;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    max-width: 700px;
+  }
+
+  .hero p {
+    font-size: 17px;
+    color: #93aec4;
+    max-width: 600px;
+    line-height: 1.8;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 50px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .stat-item strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--gold);
+  }
+
+  .stat-item span {
+    font-size: 12px;
+    color: #7f9ab2;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* CONTENT SECTIONS */
+  .content {
+    padding: 60px;
+  }
+
+  .section {
+    margin-bottom: 80px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    min-width: 70px;
+  }
+
+  .section-title-block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--steel);
+    margin-bottom: 6px;
+  }
+
+  .section-title-block p {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* FLOW DIAGRAM */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .flow-step {
+    display: flex;
+    gap: 28px;
+    position: relative;
+    padding-bottom: 32px;
+  }
+
+  .flow-step:last-child { padding-bottom: 0; }
+
+  .flow-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 48px;
+  }
+
+  .flow-dot {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--steel);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .flow-dot.gold { background: var(--gold); }
+  .flow-dot.rust { background: var(--rust); }
+
+  .flow-line {
+    width: 2px;
+    flex: 1;
+    background: linear-gradient(to bottom, var(--border), transparent);
+    margin: 6px 0;
+  }
+
+  .flow-body {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 26px;
+    flex: 1;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .flow-body h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: var(--steel);
+    margin-bottom: 8px;
+  }
+
+  .flow-body p {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .flow-body ul {
+    margin-top: 10px;
+    padding-left: 18px;
+  }
+
+  .flow-body li {
+    font-size: 13.5px;
+    color: #555;
+    margin-bottom: 4px;
+  }
+
+  /* MODULE CARDS */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+
+  .module-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .module-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  .module-card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .module-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .module-card-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--steel);
+    font-weight: 700;
+  }
+
+  .module-card-header span {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .module-card-body {
+    padding: 18px 24px 22px;
+  }
+
+  .module-card-body p {
+    font-size: 13.5px;
+    color: #555;
+    margin-bottom: 14px;
+    line-height: 1.7;
+  }
+
+  .feature-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .feature-list li {
+    font-size: 13px;
+    color: #555;
+    padding: 5px 0;
+    border-bottom: 1px solid #f0ebe0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .feature-list li:last-child { border-bottom: none; }
+
+  .feature-list li::before {
+    content: '→';
+    color: var(--gold);
+    font-size: 12px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .data-table thead {
+    background: var(--steel);
+    color: #fff;
+  }
+
+  .data-table th {
+    padding: 13px 18px;
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .data-table tbody tr:nth-child(even) {
+    background: var(--cream);
+  }
+
+  .data-table td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    color: #444;
+  }
+
+  .data-table tbody tr:last-child td { border-bottom: none; }
+
+  /* TECH STACK */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .tech-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .tech-item .emoji { font-size: 28px; display: block; margin-bottom: 8px; }
+  .tech-item strong { display: block; font-size: 13px; color: var(--steel); margin-bottom: 3px; }
+  .tech-item small { font-size: 11px; color: var(--muted); }
+
+  /* PHASE TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+    padding: 20px 24px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 24px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--paper);
+  }
+
+  .timeline-item h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--steel);
+    margin-bottom: 4px;
+  }
+
+  .phase-badge {
+    display: inline-block;
+    background: var(--cream);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .timeline-item p {
+    font-size: 13.5px;
+    color: #555;
+    line-height: 1.7;
+  }
+
+  .timeline-item ul {
+    padding-left: 18px;
+    margin-top: 8px;
+  }
+
+  .timeline-item li {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 3px;
+  }
+
+  /* CALLOUT BOXES */
+  .callout {
+    padding: 20px 24px;
+    border-radius: 8px;
+    border-left: 4px solid;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+
+  .callout-info {
+    background: #eaf2f8;
+    border-color: #2980b9;
+    color: #1a5276;
+  }
+
+  .callout-warning {
+    background: #fef9e7;
+    border-color: var(--gold);
+    color: #7d6608;
+  }
+
+  .callout-danger {
+    background: #fdedec;
+    border-color: var(--rust);
+    color: #922b21;
+  }
+
+  .callout strong { display: block; margin-bottom: 4px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* TWO COL */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--steel);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin: 2px;
+    border: 1px solid var(--border);
+  }
+
+  /* BACK TO TOP */
+  #back-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 44px;
+    height: 44px;
+    background: var(--steel);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+
+  #back-top:hover { background: var(--gold); }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; }
+    .content { padding: 30px 20px; }
+    .hero { padding: 50px 24px; }
+    .hero h1 { font-size: 36px; }
+    .tech-grid { grid-template-columns: repeat(2, 1fr); }
+    .two-col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <span>CRM Guide</span>
+    <small>Complete Reference v1.0</small>
+  </div>
+
+  <div class="nav-section-label">Overview</div>
+  <a href="#intro">Introduction</a>
+  <a href="#what-is-crm">What is a CRM?</a>
+
+  <div class="nav-section-label">Architecture</div>
+  <a href="#flow">System Flow</a>
+  <a href="#lifecycle">Lead Lifecycle</a>
+
+  <div class="nav-section-label">Modules</div>
+  <a href="#contacts">Contacts & Accounts</a>
+  <a href="#leads">Leads & Opportunities</a>
+  <a href="#sales">Sales Pipeline</a>
+  <a href="#activities">Activities & Tasks</a>
+  <a href="#communications">Communications</a>
+  <a href="#reports">Reports & Analytics</a>
+  <a href="#automation">Automation & Workflows</a>
+  <a href="#marketing">Marketing</a>
+  <a href="#support">Customer Support</a>
+  <a href="#users">User & Role Management</a>
+  <a href="#integrations">Integrations</a>
+
+  <div class="nav-section-label">Implementation</div>
+  <a href="#tech-stack">Tech Stack</a>
+  <a href="#database">Database Schema</a>
+  <a href="#phases">Phases & Roadmap</a>
+  <a href="#best-practices">Best Practices</a>
+  <a href="#kpis">KPIs & Metrics</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero" id="intro">
+    <div class="hero-tag">Complete Guide</div>
+    <h1>CRM Project — Full Architecture & Module Guide</h1>
+    <p>A comprehensive reference covering system flow, module design, data models, implementation phases, and best practices for building a production-grade Customer Relationship Management platform.</p>
+    <div class="hero-stats">
+      <div class="stat-item"><strong>11</strong><span>Core Modules</span></div>
+      <div class="stat-item"><strong>5</strong><span>Build Phases</span></div>
+      <div class="stat-item"><strong>360°</strong><span>Customer View</span></div>
+      <div class="stat-item"><strong>100%</strong><span>Documented</span></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- WHAT IS CRM -->
+    <div class="section" id="what-is-crm">
+      <div class="section-header">
+        <div class="section-number">01</div>
+        <div class="section-title-block">
+          <h2>What is a CRM System?</h2>
+          <p>Foundations, purpose, and why it matters</p>
+        </div>
+      </div>
+
+      <p style="margin-bottom:16px; color:#444; max-width:780px;">A Customer Relationship Management (CRM) system is a centralized platform that manages all interactions between a business and its customers — from the first marketing touchpoint to post-sale support. It replaces disconnected spreadsheets, email threads, and siloed tools with a single source of truth.</p>
+
+      <div class="two-col" style="margin-top:28px;">
+        <div>
+          <h3 style="font-family:'Playfair Display',serif; color:var(--steel); margin-bottom:14px; font-size:17px;">Core Goals</h3>
+          <ul class="feature-list">
+            <li>Centralize all customer and prospect data</li>
+            <li>Track the entire sales pipeline end-to-end</li>
+            <li>Automate repetitive sales and marketing tasks</li>
+            <li>Give teams visibility into customer history</li>
+            <li>Generate reports that drive informed decisions</li>
+            <li>Improve customer retention and satisfaction</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif; color:var(--steel); margin-bottom:14px; font-size:17px;">Who Uses It?</h3>
+          <table class="data-table">
+            <thead><tr><th>Role</th><th>Primary Use</th></tr></thead>
+            <tbody>
+              <tr><td>Sales Reps</td><td>Manage leads & deals</td></tr>
+              <tr><td>Managers</td><td>Pipeline oversight & forecasting</td></tr>
+              <tr><td>Marketing</td><td>Campaign tracking & leads</td></tr>
+              <tr><td>Support</td><td>Ticket management & history</td></tr>
+              <tr><td>Executives</td><td>Dashboards & KPI reports</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SYSTEM FLOW -->
+    <div class="section" id="flow">
+      <div class="section-header">
+        <div class="section-number">02</div>
+        <div class="section-title-block">
+          <h2>System Flow — How It Works</h2>
+          <p>End-to-end journey from lead capture to closed deal</p>
+        </div>
+      </div>
+
+      <div class="flow">
+        <div class="flow-step">
+          <div class="flow-left">
+            <div class="flow-dot gold">1</div>
+            <div class="flow-line"></div>
+          </div>
+          <div class="flow-body">
+            <h4>Lead Capture & Entry</h4>
+            <p>Leads enter the CRM from multiple sources — web forms, email campaigns, manual entry, API imports, or third-party integrations (LinkedIn, ads platforms). Each lead is assigned a unique record with source tracking.</p>
+            <ul>
+              <li>Web form → webhook → CRM API → auto-create Lead record</li>
+              <li>Email integration parses inbound inquiries into leads</li>
+              <li>CSV bulk import for trade shows or purchased lists</li>
+              <li>Duplicate detection runs on email + phone on entry</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-left">
+            <div class="flow-dot">2</div>
+            <div class="flow-line"></div>
+          </div>
+          <div class="flow-body">
+            <h4>Lead Qualification</h4>
+            <p>Raw leads are evaluated using BANT criteria (Budget, Authority, Need, Timeline). A scoring engine assigns numeric values based on firmographics, behavior (email opens, page visits), and demographics. Leads above a threshold are "Marketing Qualified Leads" (MQL).</p>
+            <ul>
+              <li>Lead scoring rules defined by admins (e.g. visited pricing page = +20 pts)</li>
+              <li>MQL → routed to sales team queue automatically</li>
+              <li>Unqualified leads → nurture sequence (drip emails)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-left">
+            <div class="flow-dot gold">3</div>
+            <div class="flow-line"></div>
+          </div>
+          <div class="flow-body">
+            <h4>Lead Assignment & Ownership</h4>
+            <p>Qualified leads are assigned to sales reps using round-robin, territory-based, or manual rules. Assignment triggers a notification and creates a follow-up task automatically.</p>
+            <ul>
+              <li>Round-robin: distribute evenly across team</li>
+              <li>Territory rules: match by geography or industry</li>
+              <li>Capacity rules: skip reps above defined lead limit</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-left">
+            <div class="flow-dot">4</div>
+            <div class="flow-line"></div>
+          </div>
+          <div class="flow-body">
+            <h4>Lead → Opportunity Conversion</h4>
+            <p>When a rep confirms genuine interest, the lead is "converted" — this action creates three linked records: a Contact, an Account, and an Opportunity. All prior activity logs and notes are preserved on the new records.</p>
+            <ul>
+              <li>One-click conversion with field-mapping dialog</li>
+              <li>Option to link to an existing Account vs create new</li>
+              <li>Opportunity is auto-placed in Stage 1 of the pipeline</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-left">
+            <div class="flow-dot gold">5</div>
+            <div class="flow-line"></div>
+          </div>
+          <div class="flow-body">
+            <h4>Sales Pipeline Progression</h4>
+            <p>The Opportunity moves through configurable pipeline stages (e.g. Discovery → Proposal → Negotiation → Closed Won/Lost). Each stage has entry criteria, required fields, and probability weights for forecasting.</p>
+            <ul>
+              <li>Drag-and-drop Kanban board for visual pipeline</li>
+              <li>Stage-change triggers automated tasks and alerts</li>
+              <li>Forecast value = Deal Amount × Stage Probability</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-left">
+            <div class="flow-dot rust">6</div>
+            <div class="flow-line"></div>
+          </div>
+          <div class="flow-body">
+            <h4>Close & Post-Sale Handoff</h4>
+            <p>On "Closed Won," the system triggers handoff workflows — notifications to onboarding/support teams, contract generation, invoice creation, and subscription activation. On "Closed Lost," loss reasons are captured for analytics.</p>
+            <ul>
+              <li>Mandate "Close Reason" field on any close action</li>
+              <li>Auto-create onboarding checklist tasks for new customers</li>
+              <li>Integrate with billing system to create invoice</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-left">
+            <div class="flow-dot">7</div>
+          </div>
+          <div class="flow-body">
+            <h4>Ongoing Customer Relationship</h4>
+            <p>Post-close, the Account record becomes the hub for renewal tracking, upsell opportunities, support tickets, and relationship health scores. NPS surveys, QBR logs, and escalation history all live here.</p>
+            <ul>
+              <li>Renewal opportunities auto-created 90 days before contract end</li>
+              <li>Health scoring based on usage, support tickets, and NPS</li>
+              <li>Account-level activity timeline visible to all teams</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEAD LIFECYCLE -->
+    <div class="section" id="lifecycle">
+      <div class="section-header">
+        <div class="section-number">03</div>
+        <div class="section-title-block">
+          <h2>Lead Lifecycle Statuses</h2>
+          <p>All possible states a record can be in</p>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Meaning</th>
+            <th>Next Action</th>
+            <th>Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag">New</span></td><td>Just entered the system, not yet reviewed</td><td>Assign to rep or SDR</td><td>System / Admin</td></tr>
+          <tr><td><span class="tag">Attempted</span></td><td>Rep tried to contact, no response yet</td><td>Follow-up in 2 days</td><td>Sales Rep</td></tr>
+          <tr><td><span class="tag">Connected</span></td><td>Initial conversation happened</td><td>Schedule discovery call</td><td>Sales Rep</td></tr>
+          <tr><td><span class="tag">MQL</span></td><td>Marketing Qualified — meets scoring threshold</td><td>Pass to sales</td><td>Marketing</td></tr>
+          <tr><td><span class="tag">SQL</span></td><td>Sales Qualified — rep confirmed fit</td><td>Convert to Opportunity</td><td>Sales Rep</td></tr>
+          <tr><td><span class="tag">Nurturing</span></td><td>Not ready now — in automated email sequence</td><td>Re-engage on trigger</td><td>Marketing Automation</td></tr>
+          <tr><td><span class="tag">Disqualified</span></td><td>Not a fit — wrong industry, size, or need</td><td>Archive + tag reason</td><td>Sales Rep</td></tr>
+          <tr><td><span class="tag">Converted</span></td><td>Became Contact + Account + Opportunity</td><td>Begin sales process</td><td>Sales Rep</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MODULE: CONTACTS & ACCOUNTS -->
+    <div class="section" id="contacts">
+      <div class="section-header">
+        <div class="section-number">04</div>
+        <div class="section-title-block">
+          <h2>Modules — Contacts & Accounts</h2>
+          <p>The foundational data objects of any CRM</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#eaf4fb;">👤</div>
+            <div>
+              <h3>Contacts Module</h3>
+              <span>Individual People</span>
+            </div>
+          </div>
+          <div class="module-card-body">
+            <p>A Contact represents an individual person — a customer, prospect, or stakeholder. Every interaction is logged against their record, giving a complete history.</p>
+            <ul class="feature-list">
+              <li>Full name, title, email, phone (multiple), social profiles</li>
+              <li>Linked to parent Account (company)</li>
+              <li>Activity timeline: calls, emails, meetings, notes</li>
+              <li>Custom fields for industry-specific data</li>
+              <li>Contact stage / relationship status</li>
+              <li>Duplicate merge tool</li>
+              <li>Email opt-in / GDPR consent tracking</li>
+              <li>Tags and segments for bulk actions</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fef9e7;">🏢</div>
+            <div>
+              <h3>Accounts Module</h3>
+              <span>Companies / Organizations</span>
+            </div>
+          </div>
+          <div class="module-card-body">
+            <p>An Account is a company or organization. It can have many Contacts (employees), multiple Opportunities (deals), and a full billing and support history.</p>
+            <ul class="feature-list">
+              <li>Company name, website, industry, size, revenue</li>
+              <li>Parent-child account hierarchy (subsidiaries)</li>
+              <li>All associated Contacts listed with roles</li>
+              <li>All Opportunities past and present</li>
+              <li>Support tickets and SLA status</li>
+              <li>Account health score (composite metric)</li>
+              <li>Assigned Account Executive / CSM</li>
+              <li>Renewal dates and contract details</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE: LEADS & OPPORTUNITIES -->
+    <div class="section" id="leads">
+      <div class="section-header">
+        <div class="section-number">05</div>
+        <div class="section-title-block">
+          <h2>Leads & Opportunities</h2>
+          <p>The core sales objects driving pipeline</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#eafaf1;">🎯</div>
+            <div>
+              <h3>Leads Module</h3>
+              <span>Unqualified Prospects</span>
+            </div>
+          </div>
+          <div class="module-card-body">
+            <p>Leads are unqualified prospects who haven't yet been confirmed as a fit. They are kept separate from Contacts to avoid polluting your clean customer database.</p>
+            <ul class="feature-list">
+              <li>Lead source tracking (web, referral, event, ad)</li>
+              <li>Lead score (auto-calculated by rules engine)</li>
+              <li>Assigned rep + reassignment history</li>
+              <li>Status workflow (New → Contacted → Qualified → Converted)</li>
+              <li>Web tracking integration (page visits, email opens)</li>
+              <li>Bulk assignment and bulk status update</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fdf2f8;">💼</div>
+            <div>
+              <h3>Opportunities Module</h3>
+              <span>Active Deals</span>
+            </div>
+          </div>
+          <div class="module-card-body">
+            <p>An Opportunity (or Deal) represents a real sales engagement with a defined value and close date. It progresses through pipeline stages until won or lost.</p>
+            <ul class="feature-list">
+              <li>Deal amount, expected close date, probability %</li>
+              <li>Pipeline stage with visual Kanban board</li>
+              <li>Products / line items linked to the deal</li>
+              <li>Competitors tracked on the deal</li>
+              <li>Win/loss reason mandatory on close</li>
+              <li>Forecast category (Commit / Best Case / Pipeline)</li>
+              <li>Sales team collaboration & comments</li>
+              <li>Linked quotes and proposals</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE: SALES PIPELINE -->
+    <div class="section" id="sales">
+      <div class="section-header">
+        <div class="section-number">06</div>
+        <div class="section-title-block">
+          <h2>Sales Pipeline Module</h2>
+          <p>Visual pipeline management and forecasting</p>
+        </div>
+      </div>
+
+      <table class="data-table" style="margin-bottom:24px;">
+        <thead>
+          <tr><th>Stage</th><th>Definition</th><th>Entry Criteria</th><th>Probability</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Prospecting</td><td>Initial outreach made</td><td>Lead converted</td><td>10%</td></tr>
+          <tr><td>Discovery</td><td>Needs assessment call completed</td><td>Call logged with notes</td><td>20%</td></tr>
+          <tr><td>Proposal</td><td>Formal proposal delivered</td><td>Proposal document attached</td><td>40%</td></tr>
+          <tr><td>Negotiation</td><td>Pricing/terms being discussed</td><td>Proposal viewed by prospect</td><td>60%</td></tr>
+          <tr><td>Contract Sent</td><td>Agreement sent for signature</td><td>Contract uploaded</td><td>80%</td></tr>
+          <tr><td>Closed Won</td><td>Deal signed & confirmed</td><td>Signed contract + PO</td><td>100%</td></tr>
+          <tr><td>Closed Lost</td><td>Lost to competitor or no decision</td><td>Loss reason selected</td><td>0%</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <strong>Pipeline Features</strong>
+        Kanban view (drag deals between stages), List view, Forecast view. Managers see team-level pipeline; reps see their own. Filters by date range, rep, region, product, or deal size.
+      </div>
+    </div>
+
+    <!-- MODULE: ACTIVITIES -->
+    <div class="section" id="activities">
+      <div class="section-header">
+        <div class="section-number">07</div>
+        <div class="section-title-block">
+          <h2>Activities & Tasks Module</h2>
+          <p>Track every touchpoint and keep reps accountable</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#f0f3ff;">📞</div>
+            <div><h3>Calls</h3><span>Voice Interaction Logging</span></div>
+          </div>
+          <div class="module-card-body">
+            <p>Log inbound and outbound calls with duration, outcome, and call notes. Integrates with VoIP systems (Twilio, RingCentral) for auto-logging.</p>
+            <ul class="feature-list">
+              <li>Auto-log from integrated dialer</li>
+              <li>Call disposition (Connected, No Answer, Voicemail)</li>
+              <li>Call recording link (if compliant)</li>
+              <li>Follow-up task auto-created</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fff3e0;">📅</div>
+            <div><h3>Meetings</h3><span>Calendar & Scheduling</span></div>
+          </div>
+          <div class="module-card-body">
+            <p>Schedule and track meetings synced with Google Calendar / Outlook. Meeting outcomes and notes captured post-meeting on the record.</p>
+            <ul class="feature-list">
+              <li>Two-way calendar sync</li>
+              <li>Meeting agenda and attendee list</li>
+              <li>Post-meeting notes and action items</li>
+              <li>Video conference link auto-generated</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#e8f8f5;">✅</div>
+            <div><h3>Tasks</h3><span>Action Item Management</span></div>
+          </div>
+          <div class="module-card-body">
+            <p>Reps manage daily follow-ups, reminders, and assigned action items. Tasks can be manually created or auto-generated by workflows.</p>
+            <ul class="feature-list">
+              <li>Due date, priority, and assigned user</li>
+              <li>Linked to Contact / Account / Deal</li>
+              <li>Daily task digest email</li>
+              <li>Overdue task alerts</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fce4ec;">📝</div>
+            <div><h3>Notes</h3><span>Free-Form Observations</span></div>
+          </div>
+          <div class="module-card-body">
+            <p>Rich-text notes visible to all team members with access to the record. Notes are timestamped and attributed to the author.</p>
+            <ul class="feature-list">
+              <li>Rich text with @mentions</li>
+              <li>Pinned notes for key information</li>
+              <li>Notes feed on record timeline</li>
+              <li>Searchable across all records</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE: COMMUNICATIONS -->
+    <div class="section" id="communications">
+      <div class="section-header">
+        <div class="section-number">08</div>
+        <div class="section-title-block">
+          <h2>Communications Module</h2>
+          <p>Unified inbox and email tracking</p>
+        </div>
+      </div>
+
+      <p style="margin-bottom:20px; color:#444; max-width:780px;">All customer communications — email, SMS, chat — flow through or are logged in the CRM. This gives every team member context on what's been said before they pick up the phone.</p>
+
+      <div class="two-col">
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--steel);margin-bottom:16px;font-size:17px;">Email Integration</h3>
+          <ul class="feature-list">
+            <li>Two-way Gmail / Outlook sync</li>
+            <li>Email open & link-click tracking</li>
+            <li>Email templates with merge fields</li>
+            <li>Sequences (automated multi-step outreach)</li>
+            <li>BCC-to-CRM email logging</li>
+            <li>Shared team inbox for inbound</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--steel);margin-bottom:16px;font-size:17px;">Other Channels</h3>
+          <ul class="feature-list">
+            <li>SMS / WhatsApp via Twilio integration</li>
+            <li>Live chat widget logged to CRM record</li>
+            <li>Social media mentions tracked</li>
+            <li>VoIP calls auto-logged</li>
+            <li>Video meeting recordings linked</li>
+            <li>In-app notifications for replies</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE: REPORTS -->
+    <div class="section" id="reports">
+      <div class="section-header">
+        <div class="section-number">09</div>
+        <div class="section-title-block">
+          <h2>Reports & Analytics Module</h2>
+          <p>Dashboards and insights that drive decisions</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#e8f5e9;">📊</div>
+            <div><h3>Sales Dashboards</h3><span>Real-Time Metrics</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>Total pipeline value by rep / team / region</li>
+              <li>Monthly & quarterly revenue vs. target</li>
+              <li>Win rate % (overall and by stage)</li>
+              <li>Average deal size and sales cycle length</li>
+              <li>New vs. expansion revenue split</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#e3f2fd;">📈</div>
+            <div><h3>Lead Analytics</h3><span>Funnel Reporting</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>Lead volume by source (web, referral, ads)</li>
+              <li>Lead-to-MQL and MQL-to-SQL conversion rates</li>
+              <li>Time to first contact (response time SLA)</li>
+              <li>Funnel drop-off analysis by stage</li>
+              <li>Lead aging report (uncontacted leads)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fff3e0;">🎯</div>
+            <div><h3>Forecast Reports</h3><span>Revenue Prediction</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>Weighted pipeline forecast (amount × probability)</li>
+              <li>Commit vs. Best Case vs. Pipeline categories</li>
+              <li>Historical forecast accuracy tracking</li>
+              <li>Quarter close projection with trend lines</li>
+              <li>Rep-level forecast vs. quota</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fce4ec;">🏆</div>
+            <div><h3>Activity Reports</h3><span>Rep Performance</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>Calls made / emails sent per rep per day</li>
+              <li>Tasks completed vs. overdue</li>
+              <li>Meeting-to-proposal conversion rate</li>
+              <li>Follow-up response time</li>
+              <li>Leaderboard view for team motivation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:24px;">
+        <strong>Custom Report Builder</strong>
+        Users can build any report using a drag-and-drop report editor: choose object (Leads, Deals, Contacts), select fields, apply filters, group by dimension, and choose visualization (bar, line, pie, table). Reports can be scheduled to email as PDF/CSV.
+      </div>
+    </div>
+
+    <!-- MODULE: AUTOMATION -->
+    <div class="section" id="automation">
+      <div class="section-header">
+        <div class="section-number">10</div>
+        <div class="section-title-block">
+          <h2>Automation & Workflows Module</h2>
+          <p>Eliminate manual work and enforce process consistency</p>
+        </div>
+      </div>
+
+      <p style="margin-bottom:24px; color:#444; max-width:780px;">Workflows are trigger→condition→action chains that run automatically. They enforce your process, reduce manual work, and ensure nothing falls through the cracks.</p>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Trigger</th><th>Condition</th><th>Action</th><th>Example Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Lead created</td><td>Source = "Website"</td><td>Assign to SDR team</td><td>Inbound routing</td></tr>
+          <tr><td>Lead score ≥ 80</td><td>Always</td><td>Create task for rep</td><td>Hot lead alert</td></tr>
+          <tr><td>Deal stage changed</td><td>Stage = "Proposal"</td><td>Email proposal template</td><td>Auto follow-up</td></tr>
+          <tr><td>Task overdue 24h</td><td>Always</td><td>Notify manager</td><td>Rep accountability</td></tr>
+          <tr><td>Deal closed won</td><td>Always</td><td>Create onboarding tasks + notify CS</td><td>Handoff workflow</td></tr>
+          <tr><td>Contact inactive 30d</td><td>Stage = "Customer"</td><td>Trigger re-engagement email</td><td>Retention</td></tr>
+          <tr><td>Renewal date - 90d</td><td>Account type = "Enterprise"</td><td>Create renewal opportunity</td><td>Renewal automation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MODULE: MARKETING -->
+    <div class="section" id="marketing">
+      <div class="section-header">
+        <div class="section-number">11</div>
+        <div class="section-title-block">
+          <h2>Marketing Module</h2>
+          <p>Campaigns, email sequences, and attribution</p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--steel);margin-bottom:16px;font-size:17px;">Email Campaigns</h3>
+          <ul class="feature-list">
+            <li>Drag-and-drop email builder</li>
+            <li>Segment-based sending (by industry, size, stage)</li>
+            <li>A/B test subject lines</li>
+            <li>Open, click, bounce, unsubscribe tracking</li>
+            <li>Campaign-to-revenue attribution</li>
+            <li>GDPR / CAN-SPAM compliance tools</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--steel);margin-bottom:16px;font-size:17px;">Lead Nurturing</h3>
+          <ul class="feature-list">
+            <li>Multi-step drip email sequences</li>
+            <li>Behavior-triggered branching (if opened → send X, else → send Y)</li>
+            <li>Content downloads tracked as lead events</li>
+            <li>Webinar / event registration integrated</li>
+            <li>Landing page form connector</li>
+            <li>UTM parameter auto-capture</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE: SUPPORT -->
+    <div class="section" id="support">
+      <div class="section-header">
+        <div class="section-number">12</div>
+        <div class="section-title-block">
+          <h2>Customer Support Module</h2>
+          <p>Ticketing, SLAs, and satisfaction tracking</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#f3e5f5;">🎫</div>
+            <div><h3>Ticketing</h3><span>Issue Management</span></div>
+          </div>
+          <div class="module-card-body">
+            <p>Support tickets linked to Contact and Account records so any rep can see a customer's open issues before a call.</p>
+            <ul class="feature-list">
+              <li>Ticket creation via email, form, phone</li>
+              <li>Priority tiers (Low / Medium / High / Critical)</li>
+              <li>SLA clock per priority tier</li>
+              <li>Escalation rules if SLA breached</li>
+              <li>Internal notes vs. customer-visible replies</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#e0f7fa;">😊</div>
+            <div><h3>Satisfaction (CSAT / NPS)</h3><span>Customer Feedback</span></div>
+          </div>
+          <div class="module-card-body">
+            <p>Auto-send satisfaction surveys after ticket resolution or at intervals. Scores aggregated at Contact, Account, and team level.</p>
+            <ul class="feature-list">
+              <li>CSAT survey sent on ticket close</li>
+              <li>Quarterly NPS survey automation</li>
+              <li>Responses logged to Account record</li>
+              <li>Detractor alert triggers immediate follow-up task</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODULE: USERS & ROLES -->
+    <div class="section" id="users">
+      <div class="section-header">
+        <div class="section-number">13</div>
+        <div class="section-title-block">
+          <h2>User & Role Management</h2>
+          <p>Access control and team structure</p>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Role</th><th>Access Level</th><th>Can See</th><th>Can Edit</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Admin</td><td>Full</td><td>All records, settings, billing</td><td>Everything including system config</td></tr>
+          <tr><td>Sales Manager</td><td>Team</td><td>Own team's all records</td><td>Team deals, assign leads, reports</td></tr>
+          <tr><td>Sales Rep</td><td>Own + Team View</td><td>Own leads/deals + read team's</td><td>Own assigned records</td></tr>
+          <tr><td>Marketing</td><td>Functional</td><td>Leads, campaigns, contacts</td><td>Marketing fields, campaigns</td></tr>
+          <tr><td>Support Agent</td><td>Functional</td><td>Tickets, contacts, accounts</td><td>Support tickets</td></tr>
+          <tr><td>Read Only</td><td>Limited</td><td>Reports and dashboards only</td><td>Nothing</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warning" style="margin-top:20px;">
+        <strong>Field-Level Security</strong>
+        Beyond role-level access, individual fields (e.g. contract value, personal data) can be hidden from specific roles. Critical for GDPR compliance and preventing sensitive data leakage across departments.
+      </div>
+    </div>
+
+    <!-- MODULE: INTEGRATIONS -->
+    <div class="section" id="integrations">
+      <div class="section-header">
+        <div class="section-number">14</div>
+        <div class="section-title-block">
+          <h2>Integrations</h2>
+          <p>Connecting the CRM to your full tech stack</p>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Category</th><th>Tools</th><th>Integration Type</th><th>Data Flowing</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Email</td><td>Gmail, Outlook, Exchange</td><td>OAuth / API</td><td>Emails, contacts, calendar</td></tr>
+          <tr><td>VoIP / Calling</td><td>Twilio, RingCentral, Aircall</td><td>Native / Webhook</td><td>Call logs, recordings, SMS</td></tr>
+          <tr><td>Marketing</td><td>Mailchimp, HubSpot, ActiveCampaign</td><td>API Sync</td><td>Contacts, campaigns, opt-outs</td></tr>
+          <tr><td>ERP / Billing</td><td>QuickBooks, Xero, Stripe</td><td>Webhook + API</td><td>Invoices, payments, subscriptions</td></tr>
+          <tr><td>Chat / Support</td><td>Intercom, Zendesk, Freshdesk</td><td>API</td><td>Tickets, chat logs, CSAT</td></tr>
+          <tr><td>Meetings</td><td>Zoom, Google Meet, Calendly</td><td>OAuth</td><td>Meeting links, recordings</td></tr>
+          <tr><td>Enrichment</td><td>Clearbit, ZoomInfo, Apollo</td><td>API / Webhook</td><td>Company data, contact info</td></tr>
+          <tr><td>Automation</td><td>Zapier, Make (Integromat)</td><td>Webhook / REST</td><td>Bidirectional any-field sync</td></tr>
+          <tr><td>Analytics</td><td>Google Analytics, Mixpanel</td><td>JS snippet + API</td><td>Web events, funnel data</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="section" id="tech-stack">
+      <div class="section-header">
+        <div class="section-number">15</div>
+        <div class="section-title-block">
+          <h2>Recommended Tech Stack</h2>
+          <p>Building a CRM from scratch — sensible defaults</p>
+        </div>
+      </div>
+
+      <div class="tech-grid">
+        <div class="tech-item"><span class="emoji">⚛️</span><strong>React / Next.js</strong><small>Frontend UI</small></div>
+        <div class="tech-item"><span class="emoji">🟢</span><strong>Node.js + Express</strong><small>REST API</small></div>
+        <div class="tech-item"><span class="emoji">🐘</span><strong>PostgreSQL</strong><small>Primary Database</small></div>
+        <div class="tech-item"><span class="emoji">🔴</span><strong>Redis</strong><small>Cache + Sessions</small></div>
+        <div class="tech-item"><span class="emoji">🔍</span><strong>Elasticsearch</strong><small>Full-Text Search</small></div>
+        <div class="tech-item"><span class="emoji">📨</span><strong>Bull + Redis</strong><small>Job Queues</small></div>
+        <div class="tech-item"><span class="emoji">🐳</span><strong>Docker + K8s</strong><small>Containerization</small></div>
+        <div class="tech-item"><span class="emoji">☁️</span><strong>AWS / GCP</strong><small>Cloud Hosting</small></div>
+        <div class="tech-item"><span class="emoji">🔐</span><strong>OAuth 2.0 + JWT</strong><small>Authentication</small></div>
+        <div class="tech-item"><span class="emoji">📧</span><strong>SendGrid</strong><small>Transactional Email</small></div>
+        <div class="tech-item"><span class="emoji">📞</span><strong>Twilio</strong><small>SMS + Calls</small></div>
+        <div class="tech-item"><span class="emoji">📊</span><strong>Metabase / Redash</strong><small>Analytics Layer</small></div>
+      </div>
+    </div>
+
+    <!-- DATABASE SCHEMA -->
+    <div class="section" id="database">
+      <div class="section-header">
+        <div class="section-number">16</div>
+        <div class="section-title-block">
+          <h2>Core Database Schema</h2>
+          <p>Key tables and relationships</p>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr><th>Table</th><th>Key Fields</th><th>Relationships</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>users</strong></td><td>id, name, email, role_id, team_id</td><td>Belongs to role, team</td></tr>
+          <tr><td><strong>leads</strong></td><td>id, name, email, phone, source, score, status, assigned_to, created_at</td><td>Belongs to user</td></tr>
+          <tr><td><strong>contacts</strong></td><td>id, first_name, last_name, email, phone, title, account_id</td><td>Belongs to account, has many activities</td></tr>
+          <tr><td><strong>accounts</strong></td><td>id, name, website, industry, size, arr, health_score, owner_id</td><td>Has many contacts, opportunities, tickets</td></tr>
+          <tr><td><strong>opportunities</strong></td><td>id, name, amount, stage, close_date, probability, account_id, owner_id</td><td>Belongs to account; has many activities, products</td></tr>
+          <tr><td><strong>activities</strong></td><td>id, type, subject, body, due_date, status, related_type, related_id, user_id</td><td>Polymorphic: linked to Lead / Contact / Deal</td></tr>
+          <tr><td><strong>pipelines</strong></td><td>id, name, stages (JSONB array with name + probability)</td><td>Has many opportunities</td></tr>
+          <tr><td><strong>campaigns</strong></td><td>id, name, type, status, sent_at, open_rate, click_rate</td><td>Has many campaign_contacts</td></tr>
+          <tr><td><strong>tickets</strong></td><td>id, subject, priority, status, contact_id, account_id, assigned_to</td><td>Belongs to contact, account</td></tr>
+          <tr><td><strong>workflow_rules</strong></td><td>id, trigger_object, trigger_event, conditions (JSONB), actions (JSONB)</td><td>Standalone; evaluated on record change</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PHASES -->
+    <div class="section" id="phases">
+      <div class="section-header">
+        <div class="section-number">17</div>
+        <div class="section-title-block">
+          <h2>Implementation Phases & Roadmap</h2>
+          <p>Build in stages — ship value early</p>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="phase-badge">Phase 1 · Weeks 1–6</div>
+          <h4>Foundation — Core CRM Objects</h4>
+          <p>Get the essential data structure and authentication working first.</p>
+          <ul>
+            <li>User auth (email/password + OAuth Google)</li>
+            <li>Leads module: CRUD, status, assign</li>
+            <li>Contacts & Accounts: basic profiles</li>
+            <li>Manual activity logging (calls, notes, tasks)</li>
+            <li>Basic list views with search and filter</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="phase-badge">Phase 2 · Weeks 7–12</div>
+          <h4>Sales Pipeline & Opportunities</h4>
+          <p>Enable active deal management and pipeline visibility.</p>
+          <ul>
+            <li>Opportunities module with configurable stages</li>
+            <li>Kanban pipeline board</li>
+            <li>Lead → Contact/Account/Opportunity conversion</li>
+            <li>Basic dashboards (pipeline value, win rate)</li>
+            <li>Role-based access control</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="phase-badge">Phase 3 · Weeks 13–18</div>
+          <h4>Communications & Integrations</h4>
+          <p>Connect the CRM to where work actually happens.</p>
+          <ul>
+            <li>Gmail / Outlook two-way email sync</li>
+            <li>Email open & click tracking</li>
+            <li>Calendar sync for meetings</li>
+            <li>Twilio SMS + call logging</li>
+            <li>Zapier / webhook endpoint for external triggers</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="phase-badge">Phase 4 · Weeks 19–24</div>
+          <h4>Automation, Sequences & Marketing</h4>
+          <p>Let the system work while your team sleeps.</p>
+          <ul>
+            <li>Workflow builder (trigger → condition → action)</li>
+            <li>Email sequences / drip campaigns</li>
+            <li>Lead scoring engine</li>
+            <li>Campaign module + send engine</li>
+            <li>Custom report builder</li>
+          </ul>
+        </div>
+
+        <div class="timeline-item">
+          <div class="phase-badge">Phase 5 · Weeks 25–32</div>
+          <h4>Support, Analytics & Scale</h4>
+          <p>Complete the customer journey with post-sale tools.</p>
+          <ul>
+            <li>Support ticketing with SLA timers</li>
+            <li>NPS / CSAT survey automation</li>
+            <li>Advanced forecasting with AI trend lines</li>
+            <li>Mobile app (React Native)</li>
+            <li>Public API + developer documentation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEST PRACTICES -->
+    <div class="section" id="best-practices">
+      <div class="section-header">
+        <div class="section-number">18</div>
+        <div class="section-title-block">
+          <h2>Best Practices</h2>
+          <p>What separates good CRMs from great ones</p>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--steel);margin-bottom:16px;font-size:17px;">Data Quality</h3>
+          <ul class="feature-list">
+            <li>Enforce required fields at every stage gate</li>
+            <li>Run deduplication jobs weekly</li>
+            <li>Validate email and phone on entry</li>
+            <li>Use picklists, not free text, for categorical fields</li>
+            <li>Archive, don't delete — keep historical data</li>
+            <li>Regular data enrichment via Clearbit/ZoomInfo</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;color:var(--steel);margin-bottom:16px;font-size:17px;">User Adoption</h3>
+          <ul class="feature-list">
+            <li>Mobile-first design for field sales reps</li>
+            <li>Minimize required fields — ask only what's needed</li>
+            <li>Gamification: leaderboards and activity streaks</li>
+            <li>Manager dashboards = accountability for data entry</li>
+            <li>Onboarding checklist for new users</li>
+            <li>In-app tooltips and contextual help</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout callout-danger" style="margin-top:24px;">
+        <strong>Common CRM Failures to Avoid</strong>
+        Over-customizing before adoption, importing unclean data, building too many required fields, giving everyone admin access, not training managers to inspect pipeline in the CRM, and letting data go stale by not integrating the tools reps actually use daily.
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="section" id="kpis">
+      <div class="section-header">
+        <div class="section-number">19</div>
+        <div class="section-title-block">
+          <h2>KPIs & Metrics to Track</h2>
+          <p>How you know the CRM is delivering value</p>
+        </div>
+      </div>
+
+      <div class="modules-grid">
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#e8f5e9;">💰</div>
+            <div><h3>Revenue Metrics</h3><span>Bottom Line</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>MRR / ARR growth rate</li>
+              <li>Revenue by lead source</li>
+              <li>Customer Lifetime Value (CLTV)</li>
+              <li>Average Contract Value (ACV)</li>
+              <li>Net Revenue Retention (NRR)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#e3f2fd;">🔀</div>
+            <div><h3>Pipeline Metrics</h3><span>Sales Health</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>Pipeline coverage (pipeline / quota × 3–4x ideal)</li>
+              <li>Stage-to-stage conversion rates</li>
+              <li>Average sales cycle length by segment</li>
+              <li>Deal velocity (speed through pipeline)</li>
+              <li>Slippage rate (deals pushed to next quarter)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fff3e0;">📲</div>
+            <div><h3>Activity Metrics</h3><span>Rep Behaviour</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>Calls and emails per rep per day</li>
+              <li>Time to first contact (speed to lead)</li>
+              <li>Task completion rate</li>
+              <li>Follow-up attempts before disqualify</li>
+              <li>Meeting-set rate from outbound touches</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="module-card">
+          <div class="module-card-header">
+            <div class="module-icon" style="background:#fce4ec;">🤝</div>
+            <div><h3>Customer Success</h3><span>Retention & Health</span></div>
+          </div>
+          <div class="module-card-body">
+            <ul class="feature-list">
+              <li>Churn rate (monthly and annual)</li>
+              <li>Net Promoter Score (NPS)</li>
+              <li>Average ticket resolution time</li>
+              <li>First-contact resolution rate</li>
+              <li>Renewal rate by segment</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; padding:40px 0 20px; color:var(--muted); font-size:13px; border-top:1px solid var(--border);">
+      CRM Complete Guide · Generated for your project reference · All rights to your implementation
+    </div>
+
+  </div><!-- end .content -->
+</div><!-- end .main -->
+
+<a href="#intro" id="back-top" title="Back to top">↑</a>
+
+<script>
+  // Active nav link
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.sidebar a');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === '#' + entry.target.id) {
+            link.classList.add('active');
+          }
+        });
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

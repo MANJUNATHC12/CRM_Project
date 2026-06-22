@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: crm-backend
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ConnectionStrings__DefaultConnection
+        value: Host=ep-withered-night-aos3l4gd-pooler.c-2.ap-southeast-1.aws.neon.tech;Database=neondb;Username=neondb_owner;Password=npg_uB9jrbeF4WiI;SSL Mode=Require;Trust Server Certificate=true
