@@ -66,7 +66,8 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true
     };
 })
-// Google OAuth
+;
+// Google OAuth disabled temporarily
 // .AddGoogle(options =>
 // {
 //     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
