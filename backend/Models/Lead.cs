@@ -17,4 +17,7 @@ public class Lead
     public string Phone { get; set; } = string.Empty;
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? Deadline { get; set; }
+    public DateTime? EndDate { get; set; }
+
 }

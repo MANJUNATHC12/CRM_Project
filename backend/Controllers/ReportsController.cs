@@ -41,7 +41,26 @@ public class ReportsController : ControllerBase
         });
     }
 
-    // GET /api/reports/leads-by-stage — for pipeline funnel
+    // GET /api/reports/dashboard/kpis — KPI values for dashboard
+[HttpGet("dashboard/kpis")]
+public async Task<IActionResult> GetDashboardKpis()
+{
+    var totalLeads = await _ctx.Leads.CountAsync();
+    var totalRevenue = await _ctx.Leads.Where(l => l.Stage == "Won").SumAsync(l => (double)l.Value);
+    var lostLeads = await _ctx.Leads.CountAsync(l => l.Stage == "Lost");
+    var wonLeads = await _ctx.Leads.CountAsync(l => l.Stage == "Won");
+    var upcomingDeadlines = await _ctx.Leads.CountAsync(l => l.Deadline != null && l.Deadline > DateTime.UtcNow && l.Deadline <= DateTime.UtcNow.AddDays(7));
+
+    return Ok(new
+    {
+        totalLeads,
+        totalRevenue,
+        lostLeads,
+        wonLeads,
+        upcomingDeadlines
+    });
+}
+// GET /api/reports/leads-by-stage — for pipeline funnel
     [HttpGet("leads-by-stage")]
     public async Task<IActionResult> GetLeadsByStage()
     {

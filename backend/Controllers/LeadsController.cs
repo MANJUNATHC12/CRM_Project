@@ -12,11 +12,13 @@ public class LeadsController : ControllerBase
 {
     private readonly ILeadService _leadService;
     private readonly IActivityService _activityService;
+    private readonly INotificationService _notificationService;
 
-    public LeadsController(ILeadService leadService, IActivityService activityService)
+    public LeadsController(ILeadService leadService, IActivityService activityService, INotificationService notificationService)
     {
         _leadService = leadService;
         _activityService = activityService;
+        _notificationService = notificationService;
     }
 
     private string GetUserId() => User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
@@ -67,7 +69,13 @@ public class LeadsController : ControllerBase
         {
             var updated = await _leadService.UpdateLeadAsync(id, dto);
             if (updated == null) return NotFound(new { message = "Lead not found." });
+            // Log activity
             try { await _activityService.LogActivityAsync(GetUserId(), "Updated", "Lead", id, $"Moved lead to {updated.Stage}"); } catch { /* Ignore activity errors */ }
+            // Send notification if lead is marked as Lost
+            if (updated.Stage.Equals("Lost", StringComparison.OrdinalIgnoreCase))
+            {
+                try { await _notificationService.CreateNotificationAsync(GetUserId(), "Lead Lost", $"Lead {updated.Title} was marked as Lost.", "Warning"); } catch { /* Ignore notification errors */ }
+            }
             return Ok(updated);
         }
         catch (Exception ex)

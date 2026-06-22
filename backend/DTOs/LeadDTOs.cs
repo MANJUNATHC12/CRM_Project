@@ -11,6 +11,8 @@ public class LeadDto
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
+    public DateTime? Deadline { get; set; }
+    public DateTime? EndDate { get; set; }
 }
 
 public class CreateLeadDto
@@ -21,6 +23,8 @@ public class CreateLeadDto
     [Range(0, double.MaxValue, ErrorMessage = "Value must be positive")]
     public decimal Value { get; set; }
     public string Stage { get; set; } = "New";
+    public DateTime? Deadline { get; set; }
+    public DateTime? EndDate { get; set; }
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
 }
@@ -35,4 +39,7 @@ public class UpdateLeadDto
     public string Stage { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Phone { get; set; } = string.Empty;
+    public DateTime? Deadline { get; set; }
+    public DateTime? EndDate { get; set; }
 }
+

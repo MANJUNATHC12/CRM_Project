@@ -3,10 +3,13 @@ using Crm.Api.Models;
 using Crm.Api.Repositories;
 using Crm.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,9 +18,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Configure DB
+// Configure DB - Changed from SQLite to PostgreSQL (Neon)
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure Repository Pattern & Services
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -57,21 +60,31 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey!)),
-        ValidateIssuer = false, // for dev
+        ValidateIssuer = false,
         ValidateAudience = false,
         RequireExpirationTime = false,
         ValidateLifetime = true
     };
+})
+// Google OAuth
+.AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.CallbackPath = "/signin-google";
 });
 
-// Configure CORS for frontend
+// Configure CORS for frontend - Added Vercel production URL
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "http://localhost:5173",
+            "https://crm-project-gules-pi.vercel.app"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
@@ -104,9 +117,8 @@ using (var scope = app.Services.CreateScope())
             await userManager.AddToRoleAsync(adminUser, "Admin");
         }
     }
-    else 
+    else
     {
-        // Ensure existing admin user has the role
         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -125,7 +137,7 @@ using (var scope = app.Services.CreateScope())
             await userManager.AddToRoleAsync(managerUser, "Manager");
         }
     }
-    else 
+    else
     {
         if (!await userManager.IsInRoleAsync(managerUser, "Manager"))
         {
@@ -145,7 +157,7 @@ using (var scope = app.Services.CreateScope())
             await userManager.AddToRoleAsync(salesUser, "Sales");
         }
     }
-    else 
+    else
     {
         if (!await userManager.IsInRoleAsync(salesUser, "Sales"))
         {
@@ -155,46 +167,46 @@ using (var scope = app.Services.CreateScope())
 
     // Seed Database Sample Values
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    
+
     // Seed Customers if empty
     if (!db.Customers.Any())
     {
         db.Customers.AddRange(new List<Customer>
         {
-            new Customer 
-            { 
-                Name = "Acme Global Solutions", 
-                Email = "billing@acmeglobal.com", 
-                Phone = "+1 (555) 456-1122", 
-                Company = "Acme Corp", 
-                Status = "Active", 
+            new Customer
+            {
+                Name = "Acme Global Solutions",
+                Email = "billing@acmeglobal.com",
+                Phone = "+1 (555) 456-1122",
+                Company = "Acme Corp",
+                Status = "Active",
                 CreatedAt = DateTime.UtcNow.AddDays(-60)
             },
-            new Customer 
-            { 
-                Name = "TechGiant Solutions LLC", 
-                Email = "procurement@techgiant.io", 
-                Phone = "+1 (555) 987-6543", 
-                Company = "TechGiant", 
-                Status = "Active", 
+            new Customer
+            {
+                Name = "TechGiant Solutions LLC",
+                Email = "procurement@techgiant.io",
+                Phone = "+1 (555) 987-6543",
+                Company = "TechGiant",
+                Status = "Active",
                 CreatedAt = DateTime.UtcNow.AddDays(-45)
             },
-            new Customer 
-            { 
-                Name = "Apex Creative Group", 
-                Email = "hello@apexcreative.net", 
-                Phone = "+1 (555) 321-7654", 
-                Company = "Apex Creative", 
-                Status = "Inactive", 
+            new Customer
+            {
+                Name = "Apex Creative Group",
+                Email = "hello@apexcreative.net",
+                Phone = "+1 (555) 321-7654",
+                Company = "Apex Creative",
+                Status = "Inactive",
                 CreatedAt = DateTime.UtcNow.AddDays(-30)
             },
-            new Customer 
-            { 
-                Name = "Nova Health Systems", 
-                Email = "contact@novahealth.org", 
-                Phone = "+1 (555) 888-0019", 
-                Company = "Nova Health", 
-                Status = "Active", 
+            new Customer
+            {
+                Name = "Nova Health Systems",
+                Email = "contact@novahealth.org",
+                Phone = "+1 (555) 888-0019",
+                Company = "Nova Health",
+                Status = "Active",
                 CreatedAt = DateTime.UtcNow.AddDays(-10)
             }
         });
@@ -213,7 +225,9 @@ using (var scope = app.Services.CreateScope())
                 Stage = "New",
                 Email = "marketing@novadynamics.com",
                 Phone = "+1 (555) 609-1244",
-                CreatedAt = DateTime.UtcNow.AddDays(-20)
+                CreatedAt = DateTime.UtcNow.AddDays(-20),
+                Deadline = DateTime.UtcNow.AddDays(10),
+                EndDate = null
             },
             new Lead
             {
@@ -223,7 +237,9 @@ using (var scope = app.Services.CreateScope())
                 Stage = "Contacted",
                 Email = "it-ops@alphaman.com",
                 Phone = "+1 (555) 819-3322",
-                CreatedAt = DateTime.UtcNow.AddDays(-15)
+                CreatedAt = DateTime.UtcNow.AddDays(-15),
+                Deadline = DateTime.UtcNow.AddDays(5),
+                EndDate = null
             },
             new Lead
             {
@@ -233,7 +249,9 @@ using (var scope = app.Services.CreateScope())
                 Stage = "Qualified",
                 Email = "contact@bytelabs.dev",
                 Phone = "+1 (555) 901-4400",
-                CreatedAt = DateTime.UtcNow.AddDays(-10)
+                CreatedAt = DateTime.UtcNow.AddDays(-10),
+                Deadline = DateTime.UtcNow.AddDays(7),
+                EndDate = null
             },
             new Lead
             {
@@ -243,7 +261,9 @@ using (var scope = app.Services.CreateScope())
                 Stage = "Proposal Sent",
                 Email = "inquiries@cloudstream.co",
                 Phone = "+1 (555) 234-9911",
-                CreatedAt = DateTime.UtcNow.AddDays(-8)
+                CreatedAt = DateTime.UtcNow.AddDays(-8),
+                Deadline = DateTime.UtcNow.AddDays(12),
+                EndDate = null
             },
             new Lead
             {
@@ -253,7 +273,9 @@ using (var scope = app.Services.CreateScope())
                 Stage = "Negotiation",
                 Email = "security@safenet.io",
                 Phone = "+1 (555) 765-8833",
-                CreatedAt = DateTime.UtcNow.AddDays(-5)
+                CreatedAt = DateTime.UtcNow.AddDays(-5),
+                Deadline = DateTime.UtcNow.AddDays(3),
+                EndDate = null
             },
             new Lead
             {
@@ -263,7 +285,9 @@ using (var scope = app.Services.CreateScope())
                 Stage = "Won",
                 Email = "hr@talentforce.com",
                 Phone = "+1 (555) 555-0100",
-                CreatedAt = DateTime.UtcNow.AddDays(-2)
+                CreatedAt = DateTime.UtcNow.AddDays(-2),
+                Deadline = null,
+                EndDate = DateTime.UtcNow.AddDays(-1)
             },
             new Lead
             {
@@ -273,7 +297,9 @@ using (var scope = app.Services.CreateScope())
                 Stage = "Lost",
                 Email = "purchasing@outdated.org",
                 Phone = "+1 (555) 999-9000",
-                CreatedAt = DateTime.UtcNow.AddDays(-12)
+                CreatedAt = DateTime.UtcNow.AddDays(-12),
+                Deadline = DateTime.UtcNow.AddDays(-2),
+                EndDate = DateTime.UtcNow.AddDays(-3)
             }
         });
     }
