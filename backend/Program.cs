@@ -67,12 +67,12 @@ builder.Services.AddAuthentication(options =>
     };
 })
 // Google OAuth
-.AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
-    options.CallbackPath = "/signin-google";
-});
+// .AddGoogle(options =>
+// {
+//     options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+//     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+//     options.CallbackPath = "/signin-google";
+// });
 
 // Configure CORS for frontend - Added Vercel production URL
 builder.Services.AddCors(options =>
